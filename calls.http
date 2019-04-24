@@ -1,0 +1,9 @@
+### Local
+GET http://localhost:7071/api/showjvm
+
+### Azure Functions
+GET https://showmyjvm.azurewebsites.net/api/showjvm
+
+### Spring Boot on ACI
+
+### SparkJava on ACI
