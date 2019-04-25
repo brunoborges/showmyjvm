@@ -126,6 +126,7 @@
         <module>showmyjvm-azure-function</module>
         <module>showmyjvm-springboot</module>
         <module>showmyjvm-micronaut</module>
+        <module>showmyjvm-quarkus</module>
     </modules>
 
 </project>
