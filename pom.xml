@@ -90,15 +90,6 @@
                     <groupId>com.google.cloud.tools</groupId>
                     <artifactId>jib-maven-plugin</artifactId>
                     <version>1.0.2</version>
-                    <configuration>
-                        <!--
-                        <container>
-                            <jvmFlags>
-                                <jvmFlag>-javaagent:/myfolder/agent.jar</jvmFlag>
-                            </jvmFlags>
-                        </container>
-                        -->
-                    </configuration>
                     <executions>
                         <execution>
                             <phase>package</phase>
@@ -127,6 +118,7 @@
         <module>showmyjvm-springboot</module>
         <module>showmyjvm-micronaut</module>
         <module>showmyjvm-quarkus</module>
+        <module>showmyjvm-ratpack</module>
     </modules>
 
 </project>
