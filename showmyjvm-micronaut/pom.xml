@@ -18,7 +18,7 @@
     <description>Demo project for Micronaut</description>
 
     <properties>
-        <micronaut.version>1.0.1</micronaut.version>
+        <micronaut.version>2.4.2</micronaut.version>
         <exec.mainClass>com.microsoft.showmyjvm.micronaut.Application</exec.mainClass>
     </properties>
 
