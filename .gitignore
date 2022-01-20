@@ -1,0 +1,46 @@
+# Build output
+target/
+*/target/**/*
+**/target/**/*
+*.class
+
+# Log file
+*.log
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+# IDE
+.idea/
+*.iml
+.settings/
+.project
+.classpath
+.vscode/
+
+# macOS
+.DS_Store
+
+# Azure Functions
+local.settings.json
+**/bin/
+**/obj/
+core/target/showmyjvm-core-1.0-SNAPSHOT.jar
+core/target/classes/com/microsoft/showmyjvm/core/ShowJVM.class
+core/target/quarkus/bootstrap/test-app-model.dat
+core/target/surefire-reports/com.microsoft.showmyjvm.core.BasicTest.txt
+core/target/surefire-reports/TEST-com.microsoft.showmyjvm.core.BasicTest.xml
