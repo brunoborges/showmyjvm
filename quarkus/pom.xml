@@ -5,29 +5,21 @@
   <parent>
     <groupId>com.microsoft.showmyjvm</groupId>
     <artifactId>showmyjvm-bom</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <relativePath>../bom</relativePath>
   </parent>
 
   <groupId>com.microsoft.showmyjvm</groupId>
   <artifactId>showmyjvm-quarkus</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0.0-SNAPSHOT</version>
 
   <name>ShowMyJVM with Quarkus REST API</name>
   <description>A simple Quarkus REST API to expose the JVM details.</description>
 
   <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
-    <maven.compiler.release>11</maven.compiler.release>
-
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-    <quarkus.platform.version>2.6.2.Final</quarkus.platform.version>
-
-    <surefire-plugin.version>2.22.2</surefire-plugin.version>
-    <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
+    <quarkus.platform.version>2.16.5.Final</quarkus.platform.version>
   </properties>
 
   <dependencyManagement>
@@ -89,7 +81,6 @@
       </plugin>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>${surefire-plugin.version}</version>
         <configuration>
           <systemPropertyVariables>
             <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>

@@ -2,8 +2,6 @@ package com.microsoft.showmyjvm.core;
 
 import java.lang.management.ManagementFactory;
 import java.util.Arrays;
-import java.util.Map;
-import java.util.Map.Entry;
 
 public class ShowJVM {
 
@@ -28,47 +26,49 @@ public class ShowJVM {
     public String getJVMDetails() {
         buffer = new StringBuilder();
 
-        // Runtime Properties
-        append("");
-        append("## Runtime Properties");
-        var runtimeMXBean = ManagementFactory.getRuntimeMXBean();
-        append(runtimeMXBean.getVmName() + " " + runtimeMXBean.getVmVersion());
-        append("PID @ Hostname: " + runtimeMXBean.getName());
-        runtimeMXBean.getInputArguments().forEach(arg -> append("RuntimeMXBean input: " + arg));
+        runtimeProperties();
+        memorySettings();
+        loadedClasses();
+        compilationStats();
+        garbageCollectorInfo();
+        cpuUsage();
+        threadDetails();
+        systemProperties();
+        environmentVariables();
 
-        // Memory Settings
-        final int mb = 1024 * 1024;
-        Runtime runtime = Runtime.getRuntime();
-        append("");
-        append("## Memory Settings [MB]");
-        append("Used Memory: " + (runtime.totalMemory() - runtime.freeMemory()) / mb + "MB");
-        append("Free Memory: " + runtime.freeMemory() / mb + "MB");
-        append("Total Memory: " + runtime.totalMemory() / mb + "MB");
-        append("Max Memory: " + runtime.maxMemory() / mb + "MB");
+        return buffer.toString();
+    }
 
-        // Loaded Classes
-        var classLoading = ManagementFactory.getClassLoadingMXBean();
+    private void environmentVariables() {
+        // Environment Variables
         append("");
-        append("## Loaded Classes");
-        append("Total # of loaded classes (from the RuntimeInfo start): " + classLoading.getTotalLoadedClassCount());
-        append("Total # of unloaded classes: " + classLoading.getUnloadedClassCount());
-        append("Current # of loaded classes: " + classLoading.getLoadedClassCount());
+        append("## Environment variables:");
+        System.getenv().entrySet().forEach(entry -> jvmprop(entry.getKey(), entry.getValue()));
+    }
 
-        // Compilation
-        var compiler = ManagementFactory.getCompilationMXBean();
+    private void systemProperties() {
+        // System Properties
         append("");
-        append("## Compiler");
-        append("Compiler Name: " + compiler.getName());
-        append("Total Compilation Time: " + compiler.getTotalCompilationTime());
+        append("## All System Properties:");
+        System.getProperties().entrySet().forEach(entry -> jvmprop(entry.getKey(), entry.getValue()));
+    }
 
-        // Garbage Collector
+    private void threadDetails() {
+        // Threads
+        var threads = ManagementFactory.getThreadMXBean();
         append("");
-        append("## Garbage Collectors");
-        var gcMxBeans = ManagementFactory.getGarbageCollectorMXBeans();
-        for (var gcBean : gcMxBeans) {
-            append(gcBean.getName() + ": " + gcBean.getObjectName().toString());
-        }
+        append("## Threads");
 
+        append("Threads / Started Threads / Peak: " + threads.getThreadCount() + " / "
+                + threads.getTotalStartedThreadCount() + " / " + threads.getPeakThreadCount());
+        append("CPU Time / User Time: " + threads.getCurrentThreadCpuTime() + " / "
+                + threads.getCurrentThreadUserTime());
+
+        Arrays.stream(threads.dumpAllThreads(true, true))
+                .forEach(thread -> append("Thread Name: " + thread.getThreadName()));
+    }
+
+    private void cpuUsage() {
         // CPU Usage
         append("");
         append("## CPU");
@@ -86,31 +86,57 @@ public class ShowJVM {
         append("osMXBean.getSystemCpuLoad: %s", Double.toString(_osBean.getSystemCpuLoad()));
         append("osMXBean.getProcessCpuLoad: %s", Double.toString(_osBean.getProcessCpuLoad()));
         append("osMXBean.getProcessCpuTime: %s", Double.toString(_osBean.getProcessCpuTime()));
+    }
 
-        // Threads
-        var threads = ManagementFactory.getThreadMXBean();
+    private void garbageCollectorInfo() {
+        // Garbage Collector
         append("");
-        append("## Threads");
+        append("## Garbage Collectors");
+        var gcMxBeans = ManagementFactory.getGarbageCollectorMXBeans();
+        for (var gcBean : gcMxBeans) {
+            append(gcBean.getName() + ": " + gcBean.getObjectName().toString());
+        }
+    }
 
-        append("Threads / Started Threads / Peak: " + threads.getThreadCount() + " / "
-                + threads.getTotalStartedThreadCount() + " / " + threads.getPeakThreadCount());
-        append("CPU Time / User Time: " + threads.getCurrentThreadCpuTime() + " / "
-                + threads.getCurrentThreadUserTime());
-
-        Arrays.stream(threads.dumpAllThreads(true, true))
-                .forEach(thread -> append("Thread Name: " + thread.getThreadName()));
-
-        // System Properties
+    private void compilationStats() {
+        // Compilation
+        var compiler = ManagementFactory.getCompilationMXBean();
         append("");
-        append("## All System Properties:");
-        System.getProperties().entrySet().forEach(entry -> jvmprop(entry.getKey(), entry.getValue()));
+        append("## Compiler");
+        append("Compiler Name: " + compiler.getName());
+        append("Total Compilation Time: " + compiler.getTotalCompilationTime());
+    }
 
-        // Environment Variables
+    private void loadedClasses() {
+        // Loaded Classes
+        var classLoading = ManagementFactory.getClassLoadingMXBean();
         append("");
-        append("## Environment variables:");
-        System.getenv().entrySet().forEach(entry -> jvmprop(entry.getKey(), entry.getValue()));
+        append("## Loaded Classes");
+        append("Total # of loaded classes (from the RuntimeInfo start): " + classLoading.getTotalLoadedClassCount());
+        append("Total # of unloaded classes: " + classLoading.getUnloadedClassCount());
+        append("Current # of loaded classes: " + classLoading.getLoadedClassCount());
+    }
 
-        return buffer.toString();
+    private void memorySettings() {
+        // Memory Settings
+        final int mb = 1024 * 1024;
+        Runtime runtime = Runtime.getRuntime();
+        append("");
+        append("## Memory Settings [MB]");
+        append("Used Memory: " + (runtime.totalMemory() - runtime.freeMemory()) / mb + "MB");
+        append("Free Memory: " + runtime.freeMemory() / mb + "MB");
+        append("Total Memory: " + runtime.totalMemory() / mb + "MB");
+        append("Max Memory: " + runtime.maxMemory() / mb + "MB");
+    }
+
+    private void runtimeProperties() {
+        // Runtime Properties
+        append("");
+        append("## Runtime Properties");
+        var runtimeMXBean = ManagementFactory.getRuntimeMXBean();
+        append(runtimeMXBean.getVmName() + " " + runtimeMXBean.getVmVersion());
+        append("PID @ Hostname: " + runtimeMXBean.getName());
+        runtimeMXBean.getInputArguments().forEach(arg -> append("RuntimeMXBean input: " + arg));
     }
 
     private void jvmprop(Object key, Object value) {

@@ -4,11 +4,20 @@
 
     <groupId>com.microsoft.showmyjvm</groupId>
     <artifactId>showmyjvm-parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>ShowMyJVM Parent</name>
     <description>Parent project for all modules</description>
+
+    <!-- 
+        We have to have duplicate the enforcer plugin in the parent pom.xml as well as the bom 
+        else it fails to 'enforce the parent' and gives a false postiive error
+    -->
+    <properties>
+        <maven.enforcer-plugin.version>3.2.1</maven.enforcer-plugin.version>
+        <maven.version>3.9.1</maven.version>
+    </properties>
 
     <modules>
         <module>bom</module>
@@ -21,5 +30,39 @@
         <module>azure-functions</module>
         <module>aws-lambda</module>
     </modules>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>${maven.enforcer-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>enforce-maven</id>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                            <configuration>
+                                <rules>
+                                    <requireMavenVersion>
+                                        <version>${maven.version}</version>
+                                    </requireMavenVersion>
+                                </rules>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

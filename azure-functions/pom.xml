@@ -5,13 +5,13 @@
     <parent>
         <groupId>com.microsoft.showmyjvm</groupId>
         <artifactId>showmyjvm-bom</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0.0-SNAPSHOT</version>
         <relativePath>../bom</relativePath>
     </parent>
 
     <groupId>com.microsoft.showmyjvm</groupId>
     <artifactId>showmyjvm-azure-functions</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>ShowMyJVM with Azure Functions</name>
@@ -20,8 +20,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>11</java.version>
-        <azure.functions.maven.plugin.version>1.15.0</azure.functions.maven.plugin.version>
-        <azure.functions.java.library.version>1.4.2</azure.functions.java.library.version>
+        <azure.functions.maven.plugin.version>1.24.0</azure.functions.maven.plugin.version>
+        <azure.functions.java.library.version>3.0.0</azure.functions.java.library.version>
         <functionAppName>showmyjvm-azure-functions-20220118114440464</functionAppName>
     </properties>
 
