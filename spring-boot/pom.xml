@@ -7,20 +7,20 @@
     <parent>
         <groupId>com.microsoft.showmyjvm</groupId>
         <artifactId>showmyjvm-bom</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0.0-SNAPSHOT</version>
         <relativePath>../bom</relativePath>
     </parent>
 
     <groupId>com.microsoft.showmyjvm</groupId>
     <artifactId>showmyjvm-springboot</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>ShowMyJVM with Spring Boot</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>
-        <java.version>${maven.compiler.release}</java.version>
+        <java.version>8</java.version>
     </properties>
 
     <dependencyManagement>
@@ -29,7 +29,8 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
                 <type>pom</type>
-                <version>2.6.2</version>
+                <!-- TODO Spring boot 3.x requires Java 17 -->
+                <version>2.7.11</version>
                 <scope>import</scope>
             </dependency>
         </dependencies>
@@ -54,6 +55,8 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <!-- TODO Spring boot 3.x requires Java 17 -->
+                <version>2.7.11</version>
                 <configuration>
                     <mainClass>com.microsoft.showmyjvm.springboot.Application</mainClass>
                 </configuration>

@@ -1,5 +1,5 @@
 # Build output
-target/
+**/target/
 */target/**/*
 **/target/**/*
 *.class
@@ -30,7 +30,9 @@ hs_err_pid*
 .settings/
 .project
 .classpath
-.vscode/
+
+# jenv
+.java-version
 
 # macOS
 .DS_Store
@@ -39,8 +41,9 @@ hs_err_pid*
 local.settings.json
 **/bin/
 **/obj/
-core/target/showmyjvm-core-1.0-SNAPSHOT.jar
-core/target/classes/com/microsoft/showmyjvm/core/ShowJVM.class
-core/target/quarkus/bootstrap/test-app-model.dat
-core/target/surefire-reports/com.microsoft.showmyjvm.core.BasicTest.txt
-core/target/surefire-reports/TEST-com.microsoft.showmyjvm.core.BasicTest.xml
+
+# VSCode
+.vscode/
+
+# build artifacts
+core/target/**
