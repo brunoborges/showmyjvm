@@ -10,7 +10,7 @@ public class BasicTest {
 
     @Test
     public void testApp() {
-        assertNotNull(new ShowJVM().getJVMDetails());
+        assertNotNull(new ShowJVM().dumpJVMDetails());
     }
 
 }

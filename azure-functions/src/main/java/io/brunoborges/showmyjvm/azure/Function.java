@@ -30,7 +30,7 @@ public class Function {
         context.getLogger().info("Request in. Returning JVM details...");
 
         return request.createResponseBuilder(HttpStatus.OK)
-            .body(new ShowJVM().getJVMDetails())
+            .body(new ShowJVM().dumpJVMDetails())
             .header("Content-Type", "text/plain")
             .header("X-UUID", uuid.toString())
             .build();

@@ -6,7 +6,7 @@ import java.util.Arrays;
 public class ShowJVM {
 
     public static void main(String args[]) {
-        System.out.println(new ShowJVM().getJVMDetails());
+        System.out.println(new ShowJVM().dumpJVMDetails());
     }
 
     private StringBuilder buffer = new StringBuilder();
@@ -23,7 +23,7 @@ public class ShowJVM {
         return Long.toString(bytes / 1024 / 1024) + " MB";
     }
 
-    public String getJVMDetails() {
+    public String dumpJVMDetails() {
         buffer = new StringBuilder();
 
         runtimeProperties();

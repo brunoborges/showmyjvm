@@ -20,7 +20,7 @@ class ShowController {
 
     @GetMapping(value = { "/", "/inspect" }, produces = "text/plain")
     public String showjvm() {
-        return new ShowJVM().getJVMDetails();
+        return new ShowJVM().dumpJVMDetails();
     }
 
 }

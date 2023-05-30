@@ -9,7 +9,7 @@ public class Function implements RequestHandler<Integer, String> {
         @Override
         public String handleRequest(Integer input, Context context) {
                 context.getLogger().log("Request in. Returning JVM details...");
-                return new ShowJVM().getJVMDetails();
+                return new ShowJVM().dumpJVMDetails();
         }
 
 }

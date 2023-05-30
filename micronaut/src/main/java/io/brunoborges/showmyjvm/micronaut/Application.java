@@ -21,7 +21,7 @@ class ShowController {
     @Get(uris = {"/", "/inspect"})
     @Produces(MediaType.TEXT_PLAIN)
     public String showmyjvm() {
-        return new ShowJVM().getJVMDetails();
+        return new ShowJVM().dumpJVMDetails();
     }
 
 }

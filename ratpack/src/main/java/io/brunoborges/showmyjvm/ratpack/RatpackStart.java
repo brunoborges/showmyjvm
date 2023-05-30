@@ -34,6 +34,6 @@ class RouterChain implements Action<Chain> {
 class ShowMyJVMHandler implements ratpack.handling.Handler {
     public void handle(Context ctx) {
         ctx.header("Content-type: text/plain");
-        ctx.render(new ShowJVM().getJVMDetails());
+        ctx.render(new ShowJVM().dumpJVMDetails());
     }
 }

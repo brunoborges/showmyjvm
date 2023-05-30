@@ -12,10 +12,14 @@ public class SparkStart {
         port(8080);
         Route function = (req, res) -> {
             res.type("text/plain");
-            return new ShowJVM().getJVMDetails();
+            return new ShowJVM().dumpJVMDetails();
         };
         get("/", function);
         get("/inspect", function);
+        get("/jvminfo.json", (req, res) -> {
+            res.type("application/json");
+            return new ShowJVM().dumpJVMDetails();
+        });
     }
 
 }

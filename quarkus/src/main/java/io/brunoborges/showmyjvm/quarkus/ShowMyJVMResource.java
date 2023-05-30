@@ -13,7 +13,7 @@ public class ShowMyJVMResource {
 
     @GET
     public String showmyjvm() {
-        return new ShowJVM().getJVMDetails();
+        return new ShowJVM().dumpJVMDetails();
     }
 
 }
