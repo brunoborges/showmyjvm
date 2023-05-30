@@ -5,22 +5,22 @@ import java.util.Arrays;
 
 public class ShowJVM {
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         System.out.println(new ShowJVM().dumpJVMDetails());
     }
 
-    private StringBuilder buffer = new StringBuilder();
+    private StringBuilder buffer;
 
-    protected StringBuilder append(Object s) {
-        return buffer.append(s).append("\n");
+    private void append(Object s) {
+        buffer.append(s).append("\n");
     }
 
-    protected StringBuilder append(String msg, Object... s) {
-        return buffer.append(String.format(msg, s)).append("\n");
+    private void append(String msg, Object... s) {
+        buffer.append(String.format(msg, s)).append("\n");
     }
 
     private String bytesToMBString(long bytes) {
-        return Long.toString(bytes / 1024 / 1024) + " MB";
+        return bytes / 1024 / 1024 + " MB";
     }
 
     public String dumpJVMDetails() {
@@ -43,14 +43,14 @@ public class ShowJVM {
         // Environment Variables
         append("");
         append("## Environment variables:");
-        System.getenv().entrySet().forEach(entry -> jvmprop(entry.getKey(), entry.getValue()));
+        System.getenv().forEach(this::appendJVMProperty);
     }
 
     private void systemProperties() {
         // System Properties
         append("");
         append("## All System Properties:");
-        System.getProperties().entrySet().forEach(entry -> jvmprop(entry.getKey(), entry.getValue()));
+        System.getProperties().forEach(this::appendJVMProperty);
     }
 
     private void threadDetails() {
@@ -79,11 +79,11 @@ public class ShowJVM {
 
         var _osBean = (com.sun.management.OperatingSystemMXBean) osBean;
         append("osMXBean.getCommittedVirtualMemorySize: %s", bytesToMBString(_osBean.getCommittedVirtualMemorySize()));
-        append("osMXBean.getTotalPhysicalMemorySize: %s", bytesToMBString(_osBean.getTotalPhysicalMemorySize()));
-        append("osMXBean.getFreePhysicalMemorySize: %s", bytesToMBString(_osBean.getFreePhysicalMemorySize()));
+        append("osMXBean.getTotalPhysicalMemorySize: %s", bytesToMBString(_osBean.getTotalMemorySize()));
+        append("osMXBean.getFreePhysicalMemorySize: %s", bytesToMBString(_osBean.getFreeMemorySize()));
         append("osMXBean.getTotalSwapSpaceSize: %s", bytesToMBString(_osBean.getTotalSwapSpaceSize()));
         append("osMXBean.getFreeSwapSpaceSize: %s", bytesToMBString(_osBean.getFreeSwapSpaceSize()));
-        append("osMXBean.getSystemCpuLoad: %s", Double.toString(_osBean.getSystemCpuLoad()));
+        append("osMXBean.getSystemCpuLoad: %s", Double.toString(_osBean.getCpuLoad()));
         append("osMXBean.getProcessCpuLoad: %s", Double.toString(_osBean.getProcessCpuLoad()));
         append("osMXBean.getProcessCpuTime: %s", Double.toString(_osBean.getProcessCpuTime()));
     }
@@ -139,11 +139,14 @@ public class ShowJVM {
         runtimeMXBean.getInputArguments().forEach(arg -> append("RuntimeMXBean input: " + arg));
     }
 
-    private void jvmprop(Object key, Object value) {
+    private final StringBuilder sb_reuse = new StringBuilder();
+
+    private void appendJVMProperty(Object key, Object value) {
         String v = value == null ? "" : value.toString();
-        String line = new StringBuilder().append("\"" + key + "\": \"")
+        String line = sb_reuse.append("\"").append(key).append("\": \"")
                 .append(v.replace("\\", "\\\\")).append("\"").toString();
         append(line);
+        sb_reuse.setLength(0);
     }
 
 }
