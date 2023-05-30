@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.microsoft.showmyjvm</groupId>
+        <groupId>io.brunoborges.showmyjvm</groupId>
         <artifactId>showmyjvm-bom</artifactId>
         <version>1.0.0-SNAPSHOT</version>
         <relativePath>../bom</relativePath>
@@ -18,8 +18,8 @@
     <description>Demo project for Micronaut</description>
 
     <properties>
-        <micronaut.version>3.9.1</micronaut.version>
-        <exec.mainClass>com.microsoft.showmyjvm.micronaut.Application</exec.mainClass>
+        <micronaut.version>3.9.2</micronaut.version>
+        <exec.mainClass>io.brunoborges.showmyjvm.micronaut.Application</exec.mainClass>
     </properties>
 
     <dependencyManagement>
@@ -36,7 +36,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.microsoft.showmyjvm</groupId>
+            <groupId>io.brunoborges.showmyjvm</groupId>
             <artifactId>showmyjvm-core</artifactId>
         </dependency>
         <dependency>

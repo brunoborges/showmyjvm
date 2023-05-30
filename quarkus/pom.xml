@@ -1,15 +1,17 @@
 <?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"
+  xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.microsoft.showmyjvm</groupId>
+    <groupId>io.brunoborges.showmyjvm</groupId>
     <artifactId>showmyjvm-bom</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <relativePath>../bom</relativePath>
   </parent>
 
-  <groupId>com.microsoft.showmyjvm</groupId>
+  <groupId>io.brunoborges.showmyjvm</groupId>
   <artifactId>showmyjvm-quarkus</artifactId>
   <version>1.0.0-SNAPSHOT</version>
 
@@ -17,16 +19,14 @@
   <description>A simple Quarkus REST API to expose the JVM details.</description>
 
   <properties>
-    <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
-    <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-    <quarkus.platform.version>2.16.5.Final</quarkus.platform.version>
+    <quarkus.platform.version>3.1.0.Final</quarkus.platform.version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>${quarkus.platform.group-id}</groupId>
-        <artifactId>${quarkus.platform.artifact-id}</artifactId>
+        <groupId>io.quarkus</groupId>
+        <artifactId>quarkus-bom</artifactId>
         <version>${quarkus.platform.version}</version>
         <type>pom</type>
         <scope>import</scope>
@@ -36,7 +36,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.microsoft.showmyjvm</groupId>
+      <groupId>io.brunoborges.showmyjvm</groupId>
       <artifactId>showmyjvm-core</artifactId>
     </dependency>
     <dependency>
@@ -52,7 +52,7 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>${quarkus.platform.group-id}</groupId>
+        <groupId>io.quarkus</groupId>
         <artifactId>quarkus-maven-plugin</artifactId>
         <version>${quarkus.platform.version}</version>
         <extensions>true</extensions>
@@ -109,5 +109,5 @@
       </build>
     </profile>
   </profiles>
-  
+
 </project>

@@ -1,6 +1,6 @@
-package com.microsoft.showmyjvm.ratpack;
+package io.brunoborges.showmyjvm.ratpack;
 
-import com.microsoft.showmyjvm.core.ShowJVM;
+import io.brunoborges.showmyjvm.core.ShowJVM;
 import ratpack.server.RatpackServer;
 import ratpack.server.ServerConfig;
 import ratpack.handling.Handler;

@@ -5,13 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.microsoft.showmyjvm</groupId>
+        <groupId>io.brunoborges.showmyjvm</groupId>
         <artifactId>showmyjvm-bom</artifactId>
         <version>1.0.0-SNAPSHOT</version>
         <relativePath>../bom</relativePath>
     </parent>
 
-    <groupId>com.microsoft.showmyjvm</groupId>
+    <groupId>io.brunoborges.showmyjvm</groupId>
     <artifactId>showmyjvm-sparkjava</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
@@ -20,13 +20,13 @@
     <description>A simple SparkJava REST API to expose the JVM details.</description>
 
     <properties>
-        <exec.mainClass>com.microsoft.showmyjvm.sparkjava.SparkStart</exec.mainClass>
+        <exec.mainClass>io.brunoborges.showmyjvm.sparkjava.SparkStart</exec.mainClass>
     </properties>
 
     <dependencies>
         <!-- ShowMyJVM Core -->
         <dependency>
-            <groupId>com.microsoft.showmyjvm</groupId>
+            <groupId>io.brunoborges.showmyjvm</groupId>
             <artifactId>showmyjvm-core</artifactId>
         </dependency>
 
