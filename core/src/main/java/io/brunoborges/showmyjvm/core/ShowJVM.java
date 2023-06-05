@@ -10,7 +10,7 @@ public class ShowJVM {
         System.out.println(new ShowJVM().dumpJVMDetails());
     }
 
-    private StringBuilder buffer;
+    private StringBuilder buffer = new StringBuilder(5000);
 
     private void append(Object s) {
         buffer.append(s).append("\n");
@@ -101,8 +101,6 @@ public class ShowJVM {
     }
 
     public String dumpJVMDetails() {
-        buffer = new StringBuilder();
-
         runtimeProperties();
         memorySettings();
         loadedClasses();
@@ -114,7 +112,9 @@ public class ShowJVM {
         environmentVariables();
         jvmFlags();
 
-        return buffer.toString();
+        String _return = buffer.toString();
+        buffer.setLength(0);
+        return _return;
     }
 
     private void jvmFlags() {
