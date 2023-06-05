@@ -6,6 +6,9 @@ import java.lang.management.ManagementFactory;
 import java.util.Arrays;
 import java.util.TreeMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class IdentifyGC {
 
     public static enum GCType {
@@ -14,32 +17,26 @@ public class IdentifyGC {
 
     private static final String HOTSPOT_BEAN_NAME = "com.sun.management:type=HotSpotDiagnostic";
 
-    private final GCType identifiedGC;
+    private static final Logger LOGGER = LoggerFactory.getLogger(IdentifyGC.class);
 
-    private static Object getHotspotMBean() {
-        try {
-            var clazz = Class.forName("com.sun.management.HotSpotDiagnosticMXBean");
-            var server = ManagementFactory.getPlatformMBeanServer();
-            return ManagementFactory.newPlatformMXBeanProxy(server, HOTSPOT_BEAN_NAME, clazz);
-        } catch (RuntimeException re) {
-            throw re;
-        } catch (Exception exp) {
-            throw new RuntimeException(exp);
-        }
-    }
+    private final GCType identifiedGC;
 
     private Class<?> vmOptionClazz, hotSpotDiagnosticMXBeanClazz;
 
     private PrintFlagsFinal flags;
 
-    public IdentifyGC() throws ClassNotFoundException {
-        vmOptionClazz = Class.forName("com.sun.management.VMOption");
-        hotSpotDiagnosticMXBeanClazz = Class.forName("com.sun.management.HotSpotDiagnosticMXBean");
-
-        identifiedGC = identifyGC();
+    public IdentifyGC() {
+        this(null);
     }
 
     public IdentifyGC(PrintFlagsFinal flags) {
+        try {
+            vmOptionClazz = Class.forName("com.sun.management.VMOption");
+            hotSpotDiagnosticMXBeanClazz = Class.forName("com.sun.management.HotSpotDiagnosticMXBean");
+        } catch (ClassNotFoundException e) {
+            LOGGER.warn("Can't read VMOption nor HotSpotDiagnosticMXBean classes.");
+        }
+
         this.flags = flags;
 
         identifiedGC = identifyGC();
@@ -63,7 +60,7 @@ public class IdentifyGC {
     }
 
     private String getVMOption(String vmOptionName) {
-        if(flags != null) {
+        if (flags != null) {
             String vmOption = flags.getVMOption(vmOptionName);
             if (vmOption != null) {
                 return vmOption;
@@ -94,11 +91,11 @@ public class IdentifyGC {
         }
     }
 
-    private volatile Object hotspotMBean;
+    private Object hotspotMBean;
 
     private void initHotspotMBean() {
         if (hotspotMBean == null) {
-            synchronized (ShowJVM.class) {
+            synchronized (IdentifyGC.class) {
                 if (hotspotMBean == null) {
                     hotspotMBean = getHotspotMBean();
                 }
@@ -106,8 +103,19 @@ public class IdentifyGC {
         }
     }
 
+    private Object getHotspotMBean() {
+        try {
+            var server = ManagementFactory.getPlatformMBeanServer();
+            return ManagementFactory.newPlatformMXBeanProxy(server, HOTSPOT_BEAN_NAME, hotSpotDiagnosticMXBeanClazz);
+        } catch (Exception re) {
+            LOGGER.warn("Can't proxy HotSpotDiagnosticMXBean.");
+        }
+
+        return null;
+    }
+
     public GCType getGCType() {
-     return identifiedGC;
+        return identifiedGC;
     }
 
 }
