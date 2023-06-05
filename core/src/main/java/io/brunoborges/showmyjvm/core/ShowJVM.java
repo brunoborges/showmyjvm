@@ -57,8 +57,8 @@ public class ShowJVM {
         jvmDetails.nonHeapMemoryUsage(memoryMXBean.getNonHeapMemoryUsage());
 
         // Memory Pool MBean
-        // var memoryPoolMXBeans = ManagementFactory.getMemoryPoolMXBeans();
-        // jvmDetails.memoryPoolMXBeans(memoryPoolMXBeans);
+        var memoryPoolMXBeans = ManagementFactory.getMemoryPoolMXBeans();
+        jvmDetails.memoryPoolMXBeans(memoryPoolMXBeans);
 
         // Thread MBean
         var threadMXBean = ManagementFactory.getThreadMXBean();

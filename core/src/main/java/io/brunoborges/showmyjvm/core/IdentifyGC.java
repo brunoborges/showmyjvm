@@ -64,7 +64,13 @@ public class IdentifyGC {
 
     private String getVMOption(String vmOptionName) {
         if(flags != null) {
-            return flags.getVMOption(vmOptionName);
+            String vmOption = flags.getVMOption(vmOptionName);
+            if (vmOption != null) {
+                return vmOption;
+            } else {
+                // if we don't have one GC flag, we don't have any of the GC flags
+                flags = null;
+            }
         }
 
         // initialize hotspot diagnostic MBean
