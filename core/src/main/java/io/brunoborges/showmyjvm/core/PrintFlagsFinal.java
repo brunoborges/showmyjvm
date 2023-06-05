@@ -1,7 +1,6 @@
 package io.brunoborges.showmyjvm.core;
 
 import java.lang.management.ManagementFactory;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,11 +19,65 @@ public class PrintFlagsFinal {
 
     private boolean fallbackToHotSpotDiagnosticMXBean = false;
 
+    private Method getAllFlagsMethod = null;
+
+    private HotSpotDiagnosticMXBean hotspotDiagBean;
+
+    public PrintFlagsFinal() {
+        hotspotDiagBean = ManagementFactory.getPlatformMXBean(HotSpotDiagnosticMXBean.class);
+        try {
+            final Class<?> flagClass = Class.forName("com.sun.management.internal.Flag");
+            getAllFlagsMethod = flagClass.getDeclaredMethod("getAllFlags");
+            getAllFlagsMethod.setAccessible(true);
+        } catch (Exception e) {
+            Class<?> inaccessibleException = null;
+            try {
+                inaccessibleException = Class.forName("java.lang.reflect.InaccessibleObjectException");
+            } catch (ClassNotFoundException e1) {
+            }
+
+            if (inaccessibleException != null && e.getClass().equals(inaccessibleException)) {
+                LOGGER.error(
+                        "This JVM does not open package jdk.management/com.sun.management.internal to this module. To include all flags, run with --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED");
+            }
+
+            fallbackToHotSpotDiagnosticMXBean = true;
+        }
+    }
+
     public List<JVMFlag> getJVMFlags() {
-        List<JVMFlag> flagsFound;
-        // load the diagnostic bean first to avoid UnsatisfiedLinkError
-        final HotSpotDiagnosticMXBean hsdiag = ManagementFactory.getPlatformMXBean(HotSpotDiagnosticMXBean.class);
-        List<VMOption> options;
+        List<VMOption> options = Collections.emptyList();
+
+        if (fallbackToHotSpotDiagnosticMXBean && hotspotDiagBean == null) {
+            LOGGER.error("This JVM does not support HotSpotDiagnosticMXBean. Cannot get any flags.");
+        } else if (fallbackToHotSpotDiagnosticMXBean) {
+            // only includes writable external flags
+            options = hotspotDiagBean.getDiagnosticOptions();
+        } else {
+            options = getAllFlagsFromInternal();
+        }
+
+        Map<String, VMOption> optionMap = new TreeMap<>();
+        for (final VMOption option : options) {
+            optionMap.put(option.getName(), option);
+        }
+
+        List<JVMFlag> flagsFound = new ArrayList<>(optionMap.size());
+
+        for (VMOption option : optionMap.values()) {
+            LOGGER.info(option.getName() + " = " + option.getValue() + " (" + option.getOrigin() + ", "
+                    + (option.isWriteable() ? "read-write" : "read-only") + ")");
+
+            var jvmFlag = new JVMFlag(option.getName(), option.getValue(), option.getOrigin().name(),
+                    option.isWriteable());
+            flagsFound.add(jvmFlag);
+        }
+        LOGGER.info(options.size() + " options found");
+        return flagsFound;
+    }
+
+    private List<VMOption> getAllFlagsFromInternal() {
+        List<VMOption> options = Collections.emptyList();
         try {
             final Class<?> flagClass = Class.forName("com.sun.management.internal.Flag");
             final Method getAllFlagsMethod = flagClass.getDeclaredMethod("getAllFlags");
@@ -49,32 +102,8 @@ public class PrintFlagsFinal {
                 LOGGER.error(
                         "This JVM does not open package jdk.management/com.sun.management.internal to this module. To include all flags, run with --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED");
             }
-
-            LOGGER.error("There was an error. Falling back to HotSpotDiagnosticMXBean. HotSpotDiagnosticMXBean only includes writable flags.");
-            if (hsdiag != null) {
-                // only includes writable external flags
-                options = hsdiag.getDiagnosticOptions();
-            } else {
-                options = Collections.emptyList();
-            }
         }
-        final Map<String, VMOption> optionMap = new TreeMap<>();
-        for (final VMOption option : options) {
-            optionMap.put(option.getName(), option);
-        }
-
-        flagsFound = new ArrayList<>(optionMap.size());
-
-        for (final VMOption option : optionMap.values()) {
-            LOGGER.info(option.getName() + " = " + option.getValue() + " (" + option.getOrigin() + ", "
-                    + (option.isWriteable() ? "read-write" : "read-only") + ")");
-
-            var jvmFlag = new JVMFlag(option.getName(), option.getValue(), option.getOrigin().name(),
-                    option.isWriteable());
-            flagsFound.add(jvmFlag);
-        }
-        LOGGER.info(options.size() + " options found");
-        return flagsFound;
+        return options;
     }
 
     public static class JVMFlag {
