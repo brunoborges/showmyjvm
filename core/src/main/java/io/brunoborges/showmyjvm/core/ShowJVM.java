@@ -2,6 +2,7 @@ package io.brunoborges.showmyjvm.core;
 
 import java.lang.management.ManagementFactory;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class ShowJVM {
 
@@ -21,6 +22,82 @@ public class ShowJVM {
 
     private String bytesToMBString(long bytes) {
         return bytes / 1024 / 1024 + " MB";
+    }
+
+    public JVMDetails extractJVMDetails() {
+        var jvmDetails = new JVMDetails();
+        jvmDetails.pidHostname(ManagementFactory.getRuntimeMXBean().getName());
+
+        // Runtime MBean
+        var runtimeMXBean = ManagementFactory.getRuntimeMXBean();
+        jvmDetails.vmName(runtimeMXBean.getVmName());
+        jvmDetails.vmVersion(runtimeMXBean.getVmVersion());
+        jvmDetails.vmVendor(runtimeMXBean.getVmVendor());
+        jvmDetails.inputArguments(runtimeMXBean.getInputArguments());
+
+        // Class Loading MBean
+        var classLoadingMXBean = ManagementFactory.getClassLoadingMXBean();
+        jvmDetails.totalLoadedClassCount(classLoadingMXBean.getTotalLoadedClassCount());
+        jvmDetails.unloadedClassCount(classLoadingMXBean.getUnloadedClassCount());
+        jvmDetails.loadedClassCount(classLoadingMXBean.getLoadedClassCount());
+
+        // Compilation MBean
+        var compilationMXBean = ManagementFactory.getCompilationMXBean();
+        jvmDetails.compilerName(compilationMXBean.getName());
+        jvmDetails.totalCompilationTime(compilationMXBean.getTotalCompilationTime());
+
+        // Memory MBean
+        var memoryMXBean = ManagementFactory.getMemoryMXBean();
+        jvmDetails.heapMemoryUsage(memoryMXBean.getHeapMemoryUsage());
+        jvmDetails.nonHeapMemoryUsage(memoryMXBean.getNonHeapMemoryUsage());
+
+        // Memory Pool MBean
+        var memoryPoolMXBeans = ManagementFactory.getMemoryPoolMXBeans();
+        jvmDetails.memoryPoolMXBeans(memoryPoolMXBeans);
+
+        // Thread MBean
+        var threadMXBean = ManagementFactory.getThreadMXBean();
+        jvmDetails.threadCount(threadMXBean.getThreadCount());
+        jvmDetails.peakThreadCount(threadMXBean.getPeakThreadCount());
+        jvmDetails.totalStartedThreadCount(threadMXBean.getTotalStartedThreadCount());
+
+        // Operating System MBean
+        var operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
+        jvmDetails.osName(operatingSystemMXBean.getName());
+        jvmDetails.osVersion(operatingSystemMXBean.getVersion());
+        jvmDetails.osArch(operatingSystemMXBean.getArch());
+        jvmDetails.availableProcessors(operatingSystemMXBean.getAvailableProcessors());
+        jvmDetails.systemLoadAverage(operatingSystemMXBean.getSystemLoadAverage());
+
+        if (operatingSystemMXBean instanceof com.sun.management.OperatingSystemMXBean _osBean) {
+            jvmDetails.committedVirtualMemory(_osBean.getCommittedVirtualMemorySize());
+            jvmDetails.totalMemorySize(_osBean.getTotalMemorySize());
+            jvmDetails.freeMemorySize(_osBean.getFreeMemorySize());
+            jvmDetails.totalSwapSpaceSize(_osBean.getTotalSwapSpaceSize());
+            jvmDetails.freeSwapSpaceSize(_osBean.getFreeSwapSpaceSize());
+            jvmDetails.cpuLoad(_osBean.getCpuLoad());
+            jvmDetails.processCpuLoad(_osBean.getProcessCpuLoad());
+            jvmDetails.processCpuTime(_osBean.getProcessCpuTime());
+        }
+
+        // Garbage Collector MBean
+        var garbageCollectorMXBeans = ManagementFactory.getGarbageCollectorMXBeans();
+        jvmDetails.garbageCollectors(garbageCollectorMXBeans.stream()
+                .map(gcBean -> gcBean.getName() + ": " + gcBean.getObjectName().toString())
+                .collect(Collectors.toList()));
+
+        // Environment Variables
+        jvmDetails.environmentVariables(System.getenv().entrySet().stream()
+                .map(entry -> entry.getKey() + "=" + entry.getValue()).collect(Collectors.toList()));
+
+        // System Properties
+        jvmDetails.systemProperties(System.getProperties().entrySet().stream()
+                .map(entry -> entry.getKey() + "=" + entry.getValue()).collect(Collectors.toList()));
+
+        // JVM Flags Final
+        jvmDetails.jvmFlags(new PrintFlagsFinal().getJVMFlags());
+
+        return jvmDetails;
     }
 
     public String dumpJVMDetails() {
@@ -143,8 +220,8 @@ public class ShowJVM {
 
     private void appendJVMProperty(Object key, Object value) {
         String v = value == null ? "" : value.toString();
-        String line = sb_reuse.append("\"").append(key).append("\": \"")
-                .append(v.replace("\\", "\\\\")).append("\"").toString();
+        String line = sb_reuse.append("\"").append(key).append("\": \"").append(v.replace("\\", "\\\\")).append("\"")
+                .toString();
         append(line);
         sb_reuse.setLength(0);
     }
