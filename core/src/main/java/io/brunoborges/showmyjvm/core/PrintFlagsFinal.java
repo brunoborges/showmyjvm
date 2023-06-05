@@ -112,11 +112,15 @@ public class PrintFlagsFinal {
         private String origin;
         private boolean writable;
 
+        private final String _toString;
+
         public JVMFlag(String name, String value, String origin, boolean writable) {
             this.name = name;
             this.value = value;
             this.origin = origin;
             this.writable = writable;
+
+            _toString = String.format("%s = %s (%s, %s)", name, value, origin, writable ? "read-write" : "read-only");
         }
 
         public String getName() {
@@ -133,6 +137,11 @@ public class PrintFlagsFinal {
 
         public boolean isWritable() {
             return writable;
+        }
+
+        @Override
+        public String toString() {
+            return _toString;
         }
     }
 

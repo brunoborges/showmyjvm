@@ -112,10 +112,16 @@ public class ShowJVM {
         threadDetails();
         systemProperties();
         environmentVariables();
-
-        // TODO dump JVM Flags
+        jvmFlags();
 
         return buffer.toString();
+    }
+
+    private void jvmFlags() {
+        // JVM Final Flags
+        append("");
+        append("## JVM Final Flags:");
+        new PrintFlagsFinal().getJVMFlags().forEach(this::append);
     }
 
     private void environmentVariables() {
