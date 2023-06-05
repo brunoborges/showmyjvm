@@ -113,6 +113,8 @@ public class ShowJVM {
         systemProperties();
         environmentVariables();
 
+        // TODO dump JVM Flags
+
         return buffer.toString();
     }
 
