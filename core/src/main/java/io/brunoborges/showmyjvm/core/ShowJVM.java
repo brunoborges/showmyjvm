@@ -4,7 +4,12 @@ import java.lang.management.ManagementFactory;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ShowJVM {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ShowJVM.class);
 
     public static void main(String[] args) {
         System.out.println(new ShowJVM().dumpJVMDetails());
@@ -52,8 +57,8 @@ public class ShowJVM {
         jvmDetails.nonHeapMemoryUsage(memoryMXBean.getNonHeapMemoryUsage());
 
         // Memory Pool MBean
-        var memoryPoolMXBeans = ManagementFactory.getMemoryPoolMXBeans();
-        jvmDetails.memoryPoolMXBeans(memoryPoolMXBeans);
+        // var memoryPoolMXBeans = ManagementFactory.getMemoryPoolMXBeans();
+        // jvmDetails.memoryPoolMXBeans(memoryPoolMXBeans);
 
         // Thread MBean
         var threadMXBean = ManagementFactory.getThreadMXBean();
@@ -80,7 +85,13 @@ public class ShowJVM {
             jvmDetails.processCpuTime(_osBean.getProcessCpuTime());
         }
 
+        // PrintFlagsFinal
+        PrintFlagsFinal printFlagsFinal = new PrintFlagsFinal();
+
         // Garbage Collector MBean
+        var identifyGC = new IdentifyGC(printFlagsFinal);
+        jvmDetails.gcType(identifyGC.getGCType());
+
         var garbageCollectorMXBeans = ManagementFactory.getGarbageCollectorMXBeans();
         jvmDetails.garbageCollectors(garbageCollectorMXBeans.stream()
                 .map(gcBean -> gcBean.getName() + ": " + gcBean.getObjectName().toString())
@@ -95,7 +106,7 @@ public class ShowJVM {
                 .map(entry -> entry.getKey() + "=" + entry.getValue()).collect(Collectors.toList()));
 
         // JVM Flags Final
-        jvmDetails.jvmFlags(new PrintFlagsFinal().getJVMFlags());
+        jvmDetails.jvmFlags(printFlagsFinal.getJVMFlags());
 
         return jvmDetails;
     }

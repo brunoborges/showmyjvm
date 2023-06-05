@@ -23,6 +23,8 @@ public class PrintFlagsFinal {
 
     private HotSpotDiagnosticMXBean hotspotDiagBean;
 
+    private List<JVMFlag> jvmFlags;
+
     public PrintFlagsFinal() {
         hotspotDiagBean = ManagementFactory.getPlatformMXBean(HotSpotDiagnosticMXBean.class);
         try {
@@ -43,9 +45,19 @@ public class PrintFlagsFinal {
 
             fallbackToHotSpotDiagnosticMXBean = true;
         }
+
+        readJVMFlags();
     }
 
     public List<JVMFlag> getJVMFlags() {
+        return jvmFlags;
+    }
+
+    protected void readJVMFlags() {
+        // Stop if this has already been done
+        if (jvmFlags == Collections.EMPTY_LIST || jvmFlags != null)
+            return;
+
         List<VMOption> options = Collections.emptyList();
 
         if (fallbackToHotSpotDiagnosticMXBean && hotspotDiagBean == null) {
@@ -73,7 +85,7 @@ public class PrintFlagsFinal {
             flagsFound.add(jvmFlag);
         }
         LOGGER.info(options.size() + " options found");
-        return flagsFound;
+        jvmFlags = flagsFound;
     }
 
     private List<VMOption> getAllFlagsFromInternal() {
@@ -143,6 +155,11 @@ public class PrintFlagsFinal {
         public String toString() {
             return _toString;
         }
+    }
+
+    public String getVMOption(String vmOptionName) {
+        return jvmFlags.stream().filter(flag -> flag.getName().equals(vmOptionName)).findFirst().map(JVMFlag::getValue)
+                .orElse(null);
     }
 
 }
