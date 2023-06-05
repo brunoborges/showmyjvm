@@ -88,7 +88,10 @@ public class ShowJVM {
         // PrintFlagsFinal
         PrintFlagsFinal printFlagsFinal = new PrintFlagsFinal();
 
-        // Garbage Collector MBean
+        // JVM Flags Final
+        jvmDetails.jvmFlags(printFlagsFinal.getJVMFlags());
+
+        // Garbage Collector MBean (reuse printFlagsFinal if possible)
         var identifyGC = new IdentifyGC(printFlagsFinal);
         jvmDetails.gcType(identifyGC.getGCType());
 
@@ -104,9 +107,6 @@ public class ShowJVM {
         // System Properties
         jvmDetails.systemProperties(System.getProperties().entrySet().stream()
                 .map(entry -> entry.getKey() + "=" + entry.getValue()).collect(Collectors.toList()));
-
-        // JVM Flags Final
-        jvmDetails.jvmFlags(printFlagsFinal.getJVMFlags());
 
         return jvmDetails;
     }
