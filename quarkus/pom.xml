@@ -11,7 +11,6 @@
     <relativePath>../bom</relativePath>
   </parent>
 
-  <groupId>io.brunoborges.showmyjvm</groupId>
   <artifactId>showmyjvm-quarkus</artifactId>
   <version>1.0.0-SNAPSHOT</version>
 
@@ -46,6 +45,15 @@
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-resteasy</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-resteasy-jackson</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+      <version>2.15.1</version>
     </dependency>
   </dependencies>
 

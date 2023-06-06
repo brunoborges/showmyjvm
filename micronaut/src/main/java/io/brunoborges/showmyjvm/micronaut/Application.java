@@ -1,5 +1,6 @@
 package io.brunoborges.showmyjvm.micronaut;
 
+import io.brunoborges.showmyjvm.core.JVMDetails;
 import io.brunoborges.showmyjvm.core.ShowJVM;
 
 import io.micronaut.http.MediaType;
@@ -23,5 +24,12 @@ class ShowController {
     public String showmyjvm() {
         return new ShowJVM().dumpJVMDetails();
     }
+
+    @Get(uris = {"/inspect.json"})
+    @Produces(MediaType.APPLICATION_JSON)
+    public JVMDetails jvmdetails() {
+        return new ShowJVM().extractJVMDetails();
+    }
+
 
 }
