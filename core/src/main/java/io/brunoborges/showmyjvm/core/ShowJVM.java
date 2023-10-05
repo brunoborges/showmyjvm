@@ -123,6 +123,7 @@ public class ShowJVM {
         environmentVariables();
         jvmFlags();
 
+
         String _return = buffer.toString();
         buffer.setLength(0);
         return _return;
@@ -188,6 +189,7 @@ public class ShowJVM {
         // Garbage Collector
         append("");
         append("## Garbage Collectors");
+        append(" - GC Type: " + new IdentifyGC().getGCType());
         var gcMxBeans = ManagementFactory.getGarbageCollectorMXBeans();
         for (var gcBean : gcMxBeans) {
             append(gcBean.getName() + ": " + gcBean.getObjectName().toString());
