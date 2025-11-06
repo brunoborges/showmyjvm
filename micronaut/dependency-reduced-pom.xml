@@ -98,7 +98,7 @@
     <dependency>
       <groupId>io.micronaut</groupId>
       <artifactId>micronaut-inject-java</artifactId>
-      <version>3.9.2</version>
+      <version>3.10.4</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
@@ -114,7 +114,7 @@
     </dependencies>
   </dependencyManagement>
   <properties>
-    <micronaut.version>3.9.2</micronaut.version>
+    <micronaut.version>3.10.4</micronaut.version>
     <exec.mainClass>io.brunoborges.showmyjvm.micronaut.Application</exec.mainClass>
   </properties>
 </project>

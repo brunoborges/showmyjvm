@@ -20,7 +20,7 @@
     <description>Demo project for Micronaut</description>
 
     <properties>
-        <micronaut.version>3.10.4</micronaut.version>
+        <micronaut.version>3.9.2</micronaut.version>
         <exec.mainClass>io.brunoborges.showmyjvm.micronaut.Application</exec.mainClass>
     </properties>
 
