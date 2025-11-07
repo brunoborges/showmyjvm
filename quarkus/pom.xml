@@ -19,6 +19,7 @@
 
   <properties>
     <quarkus.platform.version>3.29.1</quarkus.platform.version>
+    <java.version>25</java.version>
   </properties>
 
   <dependencyManagement>

@@ -17,6 +17,10 @@
     <name>ShowMyJVM with AWS Lambda</name>
     <description>A simple serverless function to get the JVM details.</description>
 
+    <properties>
+        <java.version>25</java.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.brunoborges.showmyjvm</groupId>

@@ -12,8 +12,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <container.base.image>mcr.microsoft.com/openjdk/jdk:21-ubuntu</container.base.image>
-        <maven.compiler.release>21</maven.compiler.release>
+        <container.base.image>mcr.microsoft.com/openjdk/jdk:25-ubuntu</container.base.image>
+        <maven.compiler.release>25</maven.compiler.release>
         <project.github.repository>brunoborges/showmyjvm</project.github.repository>
         <repository.url>git@github.com:${project.github.repository}.git</repository.url>
     </properties>
@@ -105,7 +105,7 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.13.0</version>
                     <configuration>
-                        <release>21</release>
+                        <release>25</release>
                         <compilerArgs>
                             <arg>-Xlint:unchecked</arg>
                         </compilerArgs>

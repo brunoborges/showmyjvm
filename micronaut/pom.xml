@@ -22,6 +22,7 @@
     <properties>
         <micronaut.version>3.10.4</micronaut.version>
         <exec.mainClass>io.brunoborges.showmyjvm.micronaut.Application</exec.mainClass>
+        <java.version>25</java.version>
     </properties>
 
     <dependencyManagement>

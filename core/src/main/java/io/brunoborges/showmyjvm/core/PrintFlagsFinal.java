@@ -80,7 +80,7 @@ public class PrintFlagsFinal {
             LOGGER.info(option.getName() + " = " + option.getValue() + " (" + option.getOrigin() + ", "
                     + (option.isWriteable() ? "read-write" : "read-only") + ")");
 
-            var jvmFlag = new JVMFlag(option.getName(), option.getValue(), option.getOrigin().name(),
+            JVMFlag jvmFlag = new JVMFlag(option.getName(), option.getValue(), option.getOrigin().name(),
                     option.isWriteable());
             flagsFound.add(jvmFlag);
         }

@@ -1,7 +1,16 @@
 package io.brunoborges.showmyjvm.core;
 
+import java.lang.management.ClassLoadingMXBean;
+import java.lang.management.CompilationMXBean;
+import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.MemoryPoolMXBean;
+import java.lang.management.OperatingSystemMXBean;
+import java.lang.management.RuntimeMXBean;
+import java.lang.management.ThreadMXBean;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class ShowJVM {
@@ -25,59 +34,76 @@ public class ShowJVM {
     }
 
     public JVMDetails extractJVMDetails() {
-        var jvmDetails = new JVMDetails();
+        JVMDetails jvmDetails = new JVMDetails();
         jvmDetails.pidHostname(ManagementFactory.getRuntimeMXBean().getName());
 
         // Runtime MBean
-        var runtimeMXBean = ManagementFactory.getRuntimeMXBean();
+        RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
         jvmDetails.vmName(runtimeMXBean.getVmName());
         jvmDetails.vmVersion(runtimeMXBean.getVmVersion());
         jvmDetails.vmVendor(runtimeMXBean.getVmVendor());
         jvmDetails.inputArguments(runtimeMXBean.getInputArguments());
 
         // Class Loading MBean
-        var classLoadingMXBean = ManagementFactory.getClassLoadingMXBean();
+        ClassLoadingMXBean classLoadingMXBean = ManagementFactory.getClassLoadingMXBean();
         jvmDetails.totalLoadedClassCount(classLoadingMXBean.getTotalLoadedClassCount());
         jvmDetails.unloadedClassCount(classLoadingMXBean.getUnloadedClassCount());
         jvmDetails.loadedClassCount(classLoadingMXBean.getLoadedClassCount());
 
         // Compilation MBean
-        var compilationMXBean = ManagementFactory.getCompilationMXBean();
+        CompilationMXBean compilationMXBean = ManagementFactory.getCompilationMXBean();
         jvmDetails.compilerName(compilationMXBean.getName());
         jvmDetails.totalCompilationTime(compilationMXBean.getTotalCompilationTime());
 
         // Memory MBean
-        var memoryMXBean = ManagementFactory.getMemoryMXBean();
+        MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
         jvmDetails.heapMemoryUsage(memoryMXBean.getHeapMemoryUsage());
         jvmDetails.nonHeapMemoryUsage(memoryMXBean.getNonHeapMemoryUsage());
 
         // Memory Pool MBean
-        var memoryPoolMXBeans = ManagementFactory.getMemoryPoolMXBeans();
+        List<MemoryPoolMXBean> memoryPoolMXBeans = ManagementFactory.getMemoryPoolMXBeans();
         jvmDetails.memoryPoolMXBeans(memoryPoolMXBeans);
 
         // Thread MBean
-        var threadMXBean = ManagementFactory.getThreadMXBean();
+        ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
         jvmDetails.threadCount(threadMXBean.getThreadCount());
         jvmDetails.peakThreadCount(threadMXBean.getPeakThreadCount());
         jvmDetails.totalStartedThreadCount(threadMXBean.getTotalStartedThreadCount());
 
         // Operating System MBean
-        var operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
+        OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
         jvmDetails.osName(operatingSystemMXBean.getName());
         jvmDetails.osVersion(operatingSystemMXBean.getVersion());
         jvmDetails.osArch(operatingSystemMXBean.getArch());
         jvmDetails.availableProcessors(operatingSystemMXBean.getAvailableProcessors());
         jvmDetails.systemLoadAverage(operatingSystemMXBean.getSystemLoadAverage());
 
-        if (operatingSystemMXBean instanceof com.sun.management.OperatingSystemMXBean _osBean) {
-            jvmDetails.committedVirtualMemory(_osBean.getCommittedVirtualMemorySize());
-            jvmDetails.totalMemorySize(_osBean.getTotalMemorySize());
-            jvmDetails.freeMemorySize(_osBean.getFreeMemorySize());
-            jvmDetails.totalSwapSpaceSize(_osBean.getTotalSwapSpaceSize());
-            jvmDetails.freeSwapSpaceSize(_osBean.getFreeSwapSpaceSize());
-            jvmDetails.cpuLoad(_osBean.getCpuLoad());
-            jvmDetails.processCpuLoad(_osBean.getProcessCpuLoad());
-            jvmDetails.processCpuTime(_osBean.getProcessCpuTime());
+        // Use reflection to access com.sun.management.OperatingSystemMXBean to avoid access restrictions
+        try {
+            Class<?> osBeanClass = Class.forName("com.sun.management.OperatingSystemMXBean");
+            if (osBeanClass.isInstance(operatingSystemMXBean)) {
+                Object osBean = osBeanClass.cast(operatingSystemMXBean);
+                
+                long committedVM = (Long) osBeanClass.getMethod("getCommittedVirtualMemorySize").invoke(osBean);
+                long totalMemory = (Long) osBeanClass.getMethod("getTotalMemorySize").invoke(osBean);
+                long freeMemory = (Long) osBeanClass.getMethod("getFreeMemorySize").invoke(osBean);
+                long totalSwap = (Long) osBeanClass.getMethod("getTotalSwapSpaceSize").invoke(osBean);
+                long freeSwap = (Long) osBeanClass.getMethod("getFreeSwapSpaceSize").invoke(osBean);
+                double cpuLoad = (Double) osBeanClass.getMethod("getCpuLoad").invoke(osBean);
+                double processCpuLoad = (Double) osBeanClass.getMethod("getProcessCpuLoad").invoke(osBean);
+                long processCpuTime = (Long) osBeanClass.getMethod("getProcessCpuTime").invoke(osBean);
+                
+                jvmDetails.committedVirtualMemory(committedVM);
+                jvmDetails.totalMemorySize(totalMemory);
+                jvmDetails.freeMemorySize(freeMemory);
+                jvmDetails.totalSwapSpaceSize(totalSwap);
+                jvmDetails.freeSwapSpaceSize(freeSwap);
+                jvmDetails.cpuLoad(cpuLoad);
+                jvmDetails.processCpuLoad(processCpuLoad);
+                jvmDetails.processCpuTime(processCpuTime);
+            }
+        } catch (Exception e) {
+            // Extended OS bean features not available
         }
 
         // PrintFlagsFinal
@@ -87,10 +113,10 @@ public class ShowJVM {
         jvmDetails.jvmFlags(printFlagsFinal.getJVMFlags());
 
         // Garbage Collector MBean (reuse printFlagsFinal if possible)
-        var identifyGC = new IdentifyGC(printFlagsFinal);
+        IdentifyGC identifyGC = new IdentifyGC(printFlagsFinal);
         jvmDetails.gcType(identifyGC.getGCType());
 
-        var garbageCollectorMXBeans = ManagementFactory.getGarbageCollectorMXBeans();
+        List<GarbageCollectorMXBean> garbageCollectorMXBeans = ManagementFactory.getGarbageCollectorMXBeans();
         jvmDetails.garbageCollectors(garbageCollectorMXBeans.stream()
                 .map(gcBean -> gcBean.getName() + ": " + gcBean.getObjectName().toString())
                 .collect(Collectors.toList()));
@@ -147,7 +173,7 @@ public class ShowJVM {
 
     private void threadDetails() {
         // Threads
-        var threads = ManagementFactory.getThreadMXBean();
+        ThreadMXBean threads = ManagementFactory.getThreadMXBean();
         append("");
         append("## Threads");
 
@@ -165,19 +191,37 @@ public class ShowJVM {
         append("");
         append("## CPU");
 
-        var osBean = ManagementFactory.getOperatingSystemMXBean();
+        OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
         append("osMXBean.getSystemLoadAverage: %s", Double.toString(osBean.getSystemLoadAverage()));
         append("osMXBean.getAvailableProcessors: %s", Integer.toString(osBean.getAvailableProcessors()));
 
-        var _osBean = (com.sun.management.OperatingSystemMXBean) osBean;
-        append("osMXBean.getCommittedVirtualMemorySize: %s", bytesToMBString(_osBean.getCommittedVirtualMemorySize()));
-        append("osMXBean.getTotalPhysicalMemorySize: %s", bytesToMBString(_osBean.getTotalMemorySize()));
-        append("osMXBean.getFreePhysicalMemorySize: %s", bytesToMBString(_osBean.getFreeMemorySize()));
-        append("osMXBean.getTotalSwapSpaceSize: %s", bytesToMBString(_osBean.getTotalSwapSpaceSize()));
-        append("osMXBean.getFreeSwapSpaceSize: %s", bytesToMBString(_osBean.getFreeSwapSpaceSize()));
-        append("osMXBean.getSystemCpuLoad: %s", Double.toString(_osBean.getCpuLoad()));
-        append("osMXBean.getProcessCpuLoad: %s", Double.toString(_osBean.getProcessCpuLoad()));
-        append("osMXBean.getProcessCpuTime: %s", Double.toString(_osBean.getProcessCpuTime()));
+        // Using reflection to avoid access restriction warnings in Java 8
+        try {
+            Class<?> osBeanClass = Class.forName("com.sun.management.OperatingSystemMXBean");
+            if (osBeanClass.isInstance(osBean)) {
+                Object castedOsBean = osBeanClass.cast(osBean);
+                
+                long committedVM = (Long) osBeanClass.getMethod("getCommittedVirtualMemorySize").invoke(castedOsBean);
+                long totalMemory = (Long) osBeanClass.getMethod("getTotalMemorySize").invoke(castedOsBean);
+                long freeMemory = (Long) osBeanClass.getMethod("getFreeMemorySize").invoke(castedOsBean);
+                long totalSwap = (Long) osBeanClass.getMethod("getTotalSwapSpaceSize").invoke(castedOsBean);
+                long freeSwap = (Long) osBeanClass.getMethod("getFreeSwapSpaceSize").invoke(castedOsBean);
+                double systemCpuLoad = (Double) osBeanClass.getMethod("getCpuLoad").invoke(castedOsBean);
+                double processCpuLoad = (Double) osBeanClass.getMethod("getProcessCpuLoad").invoke(castedOsBean);
+                long processCpuTime = (Long) osBeanClass.getMethod("getProcessCpuTime").invoke(castedOsBean);
+                
+                append("osMXBean.getCommittedVirtualMemorySize: %s", bytesToMBString(committedVM));
+                append("osMXBean.getTotalPhysicalMemorySize: %s", bytesToMBString(totalMemory));
+                append("osMXBean.getFreePhysicalMemorySize: %s", bytesToMBString(freeMemory));
+                append("osMXBean.getTotalSwapSpaceSize: %s", bytesToMBString(totalSwap));
+                append("osMXBean.getFreeSwapSpaceSize: %s", bytesToMBString(freeSwap));
+                append("osMXBean.getSystemCpuLoad: %s", Double.toString(systemCpuLoad));
+                append("osMXBean.getProcessCpuLoad: %s", Double.toString(processCpuLoad));
+                append("osMXBean.getProcessCpuTime: %s", Double.toString(processCpuTime));
+            }
+        } catch (Exception e) {
+            append("Error accessing extended OS bean features: " + e.getMessage());
+        }
     }
 
     private void garbageCollectorInfo() {
@@ -185,15 +229,15 @@ public class ShowJVM {
         append("");
         append("## Garbage Collectors");
         append(" - GC Type: " + new IdentifyGC().getGCType());
-        var gcMxBeans = ManagementFactory.getGarbageCollectorMXBeans();
-        for (var gcBean : gcMxBeans) {
+        List<GarbageCollectorMXBean> gcMxBeans = ManagementFactory.getGarbageCollectorMXBeans();
+        for (GarbageCollectorMXBean gcBean : gcMxBeans) {
             append(gcBean.getName() + ": " + gcBean.getObjectName().toString());
         }
     }
 
     private void compilationStats() {
         // Compilation
-        var compiler = ManagementFactory.getCompilationMXBean();
+        CompilationMXBean compiler = ManagementFactory.getCompilationMXBean();
         append("");
         append("## Compiler");
         append("Compiler Name: " + compiler.getName());
@@ -202,7 +246,7 @@ public class ShowJVM {
 
     private void loadedClasses() {
         // Loaded Classes
-        var classLoading = ManagementFactory.getClassLoadingMXBean();
+        ClassLoadingMXBean classLoading = ManagementFactory.getClassLoadingMXBean();
         append("");
         append("## Loaded Classes");
         append("Total # of loaded classes (from the RuntimeInfo start): " + classLoading.getTotalLoadedClassCount());
@@ -226,7 +270,7 @@ public class ShowJVM {
         // Runtime Properties
         append("");
         append("## Runtime Properties");
-        var runtimeMXBean = ManagementFactory.getRuntimeMXBean();
+        RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
         append(runtimeMXBean.getVmName() + " " + runtimeMXBean.getVmVersion());
         append("PID @ Hostname: " + runtimeMXBean.getName());
         runtimeMXBean.getInputArguments().forEach(arg -> append("RuntimeMXBean input: " + arg));

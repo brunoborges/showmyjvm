@@ -21,6 +21,7 @@
 
     <properties>
         <exec.mainClass>io.brunoborges.showmyjvm.sparkjava.SparkStart</exec.mainClass>
+        <java.version>25</java.version>
     </properties>
 
     <dependencies>

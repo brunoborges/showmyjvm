@@ -4,6 +4,7 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.management.ManagementFactory;
 import java.util.Arrays;
+import java.util.List;
 import java.util.TreeMap;
 
 import org.slf4j.Logger;
@@ -44,10 +45,10 @@ public class IdentifyGC {
 
     private GCType identifyGC() {
         try {
-            var flags = Arrays.asList(GCType.values());
-            var flagSettings = new TreeMap<GCType, String>();
-            for (var flag : flags) {
-                var vmOption = getVMOption("Use" + flag.name());
+            List<GCType> flags = Arrays.asList(GCType.values());
+            TreeMap<GCType, String> flagSettings = new TreeMap<GCType, String>();
+            for (GCType flag : flags) {
+                String vmOption = getVMOption("Use" + flag.name());
                 if (vmOption != null) {
                     flagSettings.put(flag, vmOption);
                 }
@@ -73,13 +74,13 @@ public class IdentifyGC {
         // initialize hotspot diagnostic MBean
         initHotspotMBean();
         try {
-            var publicLookup = MethodHandles.publicLookup();
-            var mt = MethodType.methodType(vmOptionClazz, String.class);
-            var getVMOption = publicLookup.findVirtual(hotSpotDiagnosticMXBeanClazz, "getVMOption", mt);
-            var vmOption = getVMOption.invokeWithArguments(hotspotMBean, vmOptionName);
+            MethodHandles.Lookup publicLookup = MethodHandles.publicLookup();
+            MethodType mt = MethodType.methodType(vmOptionClazz, String.class);
+            java.lang.invoke.MethodHandle getVMOption = publicLookup.findVirtual(hotSpotDiagnosticMXBeanClazz, "getVMOption", mt);
+            Object vmOption = getVMOption.invokeWithArguments(hotspotMBean, vmOptionName);
 
-            var mt2 = MethodType.methodType(String.class);
-            var mh2 = publicLookup.findVirtual(vmOptionClazz, "getValue", mt2);
+            MethodType mt2 = MethodType.methodType(String.class);
+            java.lang.invoke.MethodHandle mh2 = publicLookup.findVirtual(vmOptionClazz, "getValue", mt2);
             return (String) mh2.invokeWithArguments(vmOption);
         } catch (IllegalArgumentException e) {
             if (e.getMessage().contains("does not exist")) {
@@ -105,7 +106,7 @@ public class IdentifyGC {
 
     private Object getHotspotMBean() {
         try {
-            var server = ManagementFactory.getPlatformMBeanServer();
+            javax.management.MBeanServer server = ManagementFactory.getPlatformMBeanServer();
             return ManagementFactory.newPlatformMXBeanProxy(server, HOTSPOT_BEAN_NAME, hotSpotDiagnosticMXBeanClazz);
         } catch (Exception re) {
             LOGGER.warn("Can't proxy HotSpotDiagnosticMXBean.");

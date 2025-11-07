@@ -16,6 +16,7 @@
 
     <properties>
         <exec.mainClass>io.brunoborges.showmyjvm.ratpack.RatpackStart</exec.mainClass>
+        <java.version>25</java.version>
     </properties>
 
     <name>ShowMyJVM with Ratpack REST API</name>
