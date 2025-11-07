@@ -22,8 +22,10 @@
         <module>micronaut</module>
         <module>quarkus</module>
         <module>ratpack</module>
+        <!--
         <module>azure-functions</module>
         <module>aws-lambda</module>
+        -->
     </modules>
 
     <build>
