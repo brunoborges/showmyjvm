@@ -1,5 +1,6 @@
-profile: service
+applicationType: default
 defaultPackage: showmyjvm.micronaut
----
 testFramework: junit
 sourceLanguage: java
+buildTool: maven
+features: [properties, readme, maven, junit, shade, http-client-test, java, static-resources, maven-enforcer-plugin, serialization-jackson, micronaut-http-validation, logback, micronaut-aot, netty-server, micronaut-processing-compiler-args, app-name]

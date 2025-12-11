@@ -20,7 +20,8 @@
     <description>Demo project for Micronaut</description>
 
     <properties>
-        <micronaut.version>3.10.4</micronaut.version>
+        <micronaut.core.version>4.7.1</micronaut.core.version>
+        <micronaut.validation.version>4.11.0</micronaut.validation.version>
         <exec.mainClass>io.brunoborges.showmyjvm.micronaut.Application</exec.mainClass>
         <java.version>25</java.version>
     </properties>
@@ -28,9 +29,9 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>io.micronaut</groupId>
-                <artifactId>micronaut-bom</artifactId>
-                <version>${micronaut.version}</version>
+                <groupId>io.micronaut.platform</groupId>
+                <artifactId>micronaut-platform</artifactId>
+                <version>4.8.3</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -48,7 +49,7 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>io.micronaut</groupId>
+            <groupId>io.micronaut.validation</groupId>
             <artifactId>micronaut-validation</artifactId>
             <scope>compile</scope>
         </dependency>
@@ -69,19 +70,37 @@
         </dependency>
         <dependency>
             <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-jackson-databind</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.micronaut</groupId>
             <artifactId>micronaut-inject-java</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.4.7</version>
+            <version>1.5.21</version>
             <scope>runtime</scope>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>io.micronaut.maven</groupId>
+                <artifactId>micronaut-maven-plugin</artifactId>
+                <version>4.11.4</version>
+                <configuration>
+                    <mainClass>${exec.mainClass}</mainClass>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>com.google.cloud.tools</groupId>
                 <artifactId>jib-maven-plugin</artifactId>
@@ -128,12 +147,12 @@
                             <path>
                                 <groupId>io.micronaut</groupId>
                                 <artifactId>micronaut-inject-java</artifactId>
-                                <version>${micronaut.version}</version>
+                                <version>4.9.4</version>
                             </path>
                             <path>
-                                <groupId>io.micronaut</groupId>
-                                <artifactId>micronaut-validation</artifactId>
-                                <version>${micronaut.version}</version>
+                                <groupId>io.micronaut.validation</groupId>
+                                <artifactId>micronaut-validation-processor</artifactId>
+                                <version>4.11.0</version>
                             </path>
                         </annotationProcessorPaths>
                     </configuration>
@@ -151,12 +170,12 @@
                                     <path>
                                         <groupId>io.micronaut</groupId>
                                         <artifactId>micronaut-inject-java</artifactId>
-                                        <version>${micronaut.version}</version>
+                                        <version>4.9.4</version>
                                     </path>
                                     <path>
-                                        <groupId>io.micronaut</groupId>
-                                        <artifactId>micronaut-validation</artifactId>
-                                        <version>${micronaut.version}</version>
+                                        <groupId>io.micronaut.validation</groupId>
+                                        <artifactId>micronaut-validation-processor</artifactId>
+                                        <version>4.11.0</version>
                                     </path>
                                 </annotationProcessorPaths>
                             </configuration>
