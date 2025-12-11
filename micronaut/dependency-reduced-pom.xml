@@ -31,12 +31,12 @@
                   <path>
                     <groupId>io.micronaut</groupId>
                     <artifactId>micronaut-inject-java</artifactId>
-                    <version>${micronaut.core.version}</version>
+                    <version>4.9.4</version>
                   </path>
                   <path>
                     <groupId>io.micronaut.validation</groupId>
                     <artifactId>micronaut-validation-processor</artifactId>
-                    <version>${micronaut.validation.version}</version>
+                    <version>4.11.0</version>
                   </path>
                 </annotationProcessorPaths>
               </configuration>

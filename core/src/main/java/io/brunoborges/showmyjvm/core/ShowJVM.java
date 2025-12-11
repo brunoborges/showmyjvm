@@ -62,7 +62,17 @@ public class ShowJVM {
 
         // Memory Pool MBean
         List<MemoryPoolMXBean> memoryPoolMXBeans = ManagementFactory.getMemoryPoolMXBeans();
-        jvmDetails.memoryPoolMXBeans(memoryPoolMXBeans);
+        List<MemoryPoolDetails> memoryPoolDetails = memoryPoolMXBeans.stream().map(bean -> {
+            MemoryPoolDetails details = new MemoryPoolDetails();
+            details.setName(bean.getName());
+            details.setType(bean.getType());
+            details.setUsage(bean.getUsage());
+            details.setPeakUsage(bean.getPeakUsage());
+            details.setCollectionUsage(bean.getCollectionUsage());
+            details.setManagerNames(bean.getMemoryManagerNames());
+            return details;
+        }).collect(Collectors.toList());
+        jvmDetails.memoryPoolMXBeans(memoryPoolDetails);
 
         // Thread MBean
         ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();

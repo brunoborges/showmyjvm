@@ -1,6 +1,5 @@
 package io.brunoborges.showmyjvm.core;
 
-import java.lang.management.MemoryPoolMXBean;
 import java.lang.management.MemoryUsage;
 import java.util.List;
 
@@ -30,7 +29,7 @@ public class JVMDetails {
     private String pidHostname;
     private MemoryUsage heapMemoryUsage;
     private MemoryUsage nonHeapMemoryUsage;
-    private List<MemoryPoolMXBean> memoryPoolMXBeans;
+    private List<MemoryPoolDetails> memoryPoolMXBeans;
     private int threadCount;
     private int peakThreadCount;
     private long totalStartedThreadCount;
@@ -191,7 +190,7 @@ public class JVMDetails {
         this.nonHeapMemoryUsage = nonHeapMemoryUsage;
     }
 
-    public void memoryPoolMXBeans(List<MemoryPoolMXBean> memoryPoolMXBeans) {
+    public void memoryPoolMXBeans(List<MemoryPoolDetails> memoryPoolMXBeans) {
         this.memoryPoolMXBeans = memoryPoolMXBeans;
     }
 
@@ -306,7 +305,7 @@ public class JVMDetails {
     /**
      * @return the memoryPoolMXBeans
      */
-    public List<MemoryPoolMXBean> getMemoryPoolMXBeans() {
+    public List<MemoryPoolDetails> getMemoryPoolMXBeans() {
         return memoryPoolMXBeans;
     }
 
