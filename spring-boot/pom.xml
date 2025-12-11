@@ -29,7 +29,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
                 <type>pom</type>
-                <version>3.4.6</version>
+                <version>3.5.6</version>
                 <scope>import</scope>
             </dependency>
         </dependencies>
@@ -60,7 +60,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>3.4.6</version>
+                <version>3.5.6</version>
                 <configuration>
                     <mainClass>io.brunoborges.showmyjvm.springboot.Application</mainClass>
                 </configuration>
@@ -72,27 +72,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.microsoft.azure</groupId>
-                <artifactId>azure-webapp-maven-plugin</artifactId>
-                <version>2.15.0</version>
-                <configuration>
-                    <schemaVersion>v2</schemaVersion>
-                    <runtime></runtime>
-                    <resourceGroup>DefaultResourceGroup-WUS2</resourceGroup>
-                    <appName>brborges-dnhmhtadh0hgdrgm</appName>
-                    <deployment>
-                        <resources>
-                            <resource>
-                                <directory>${project.basedir}/target</directory>
-                                <includes>
-                                    <include>*.jar</include>
-                                </includes>
-                            </resource>
-                        </resources>
-                    </deployment>
-                </configuration>
             </plugin>
         </plugins>
     </build>
