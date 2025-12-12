@@ -25,11 +25,11 @@ get_maven_command() {
     quarkus) echo "quarkus:dev" ;;
     micronaut) echo "mn:run" ;;
     helidon) echo "exec:exec" ;;
-    helidon-mp) echo "exec:java" ;;
-    javalin) echo "exec:java" ;;
-    ratpack) echo "exec:java" ;;
-    sparkjava) echo "exec:java" ;;
-    *) echo "exec:java" ;;
+    helidon-mp) echo "exec:exec" ;;
+    javalin) echo "exec:exec" ;;
+    ratpack) echo "exec:exec" ;;
+    sparkjava) echo "exec:exec" ;;
+    *) echo "exec:exec" ;;
   esac
 }
 

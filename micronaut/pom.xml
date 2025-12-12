@@ -23,7 +23,7 @@
         <micronaut.core.version>4.7.1</micronaut.core.version>
         <micronaut.validation.version>4.11.0</micronaut.validation.version>
         <micronaut.test.resources.version>2.9.2</micronaut.test.resources.version>
-        <exec.mainClass>io.brunoborges.showmyjvm.micronaut.Application</exec.mainClass>
+        <mainClass>io.brunoborges.showmyjvm.micronaut.Application</mainClass>
         <java.version>25</java.version>
     </properties>
 
@@ -99,7 +99,7 @@
                 <artifactId>micronaut-maven-plugin</artifactId>
                 <version>4.11.4</version>
                 <configuration>
-                    <mainClass>${exec.mainClass}</mainClass>
+                    <mainClass>${mainClass}</mainClass>
                     <testResourcesVersion>4.11.4</testResourcesVersion>
                 </configuration>
             </plugin>

@@ -23,6 +23,7 @@
         <module>helidon-mp</module>
         <module>tomcat</module>
         <module>ratpack</module>
+        <module>javalin</module>
     </modules>
     <build>
         <pluginManagement>

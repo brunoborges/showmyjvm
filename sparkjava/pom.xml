@@ -20,7 +20,7 @@
     <description>A simple SparkJava REST API to expose the JVM details.</description>
 
     <properties>
-        <exec.mainClass>io.brunoborges.showmyjvm.sparkjava.SparkStart</exec.mainClass>
+        <mainClass>io.brunoborges.showmyjvm.sparkjava.SparkStart</mainClass>
         <java.version>25</java.version>
     </properties>
 
@@ -36,6 +36,13 @@
             <groupId>com.sparkjava</groupId>
             <artifactId>spark-core</artifactId>
             <version>2.9.4</version>
+        </dependency>
+
+        <!-- Gson -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.13.2</version>
         </dependency>
 
         <!-- SLF4J -->
