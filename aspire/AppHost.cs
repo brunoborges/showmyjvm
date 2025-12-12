@@ -13,11 +13,11 @@ builder.AddContainer("tomcat", "showmyjvm-tomcat:latest").WithHttpEndpoint(port:
 // helidon -> mvn exec:exec
 // helidon-mp -> mvn exec:exec
 // quarkus -> mvn quarkus:run
-// javalin -> mvn exec:java
+// javalin -> mvn exec:exec
 // spring-boot -> mvn spring-boot:run
 // micronaut -> mvn mn:run
 // quarkus -> mvn quarkus:run
-// ratpack -> mvn exec:java
+// ratpack -> mvn exec:exec
 // tomcat -> mvn cargo:run
 
 // It may also be possible to run using java -jar {jarfile}.jar if the framework supports it (meaning, it produces an executable jar)
