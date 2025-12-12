@@ -30,7 +30,13 @@ jobs:
         cache-dependency-path: e2e-tests/package-lock.json
     
     - name: Build all projects
-      run: ./mvnw -B clean package -DskipTests --file pom.xml
+      run: ./mvnw -B clean package -DskipTests
+
+    - name: Install Core
+      run: ./mvnw -B install -DskipTests -pl core
+
+    - name: Tomcat Specific Cargo Container Installation
+      run: ./mvnw -B cargo:configure -pl tomcat -DskipTests 
     
     - name: Install Playwright dependencies
       working-directory: e2e-tests

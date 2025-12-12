@@ -67,6 +67,7 @@
         <dependency>
             <groupId>io.smallrye</groupId>
             <artifactId>jandex</artifactId>
+            <version>3.5.2</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -117,6 +118,7 @@
             <plugin>
                 <groupId>io.smallrye</groupId>
                 <artifactId>jandex-maven-plugin</artifactId>
+                <version>3.5.3</version>
                 <executions>
                     <execution>
                         <id>make-index</id>
