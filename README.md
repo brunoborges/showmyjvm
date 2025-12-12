@@ -1,18 +1,21 @@
 # Show My JVM
 
-A comprehensive Java project that demonstrates detailed JVM (Java Virtual Machine) introspection and analysis across multiple modern web frameworks and cloud platforms. This project showcases the power of JVM runtime analysis using Java 21 features and contemporary deployment architectures.
+A comprehensive Java project that demonstrates detailed JVM (Java Virtual Machine) introspection and analysis across multiple modern web frameworks. This project showcases the power of JVM runtime analysis using Java 25 features and contemporary deployment architectures.
 
 ## 🎯 Overview
 
-Show My JVM provides a sophisticated core library that extracts comprehensive JVM runtime information and exposes it through multiple web frameworks and cloud platforms. The project demonstrates how the same core functionality can be deployed across different architectures, from traditional web servers to modern serverless functions.
+Show My JVM provides a sophisticated core library that extracts comprehensive JVM runtime information and exposes it through multiple web frameworks. The project demonstrates how the same core functionality can be deployed across different architectures, from traditional web servers to modern reactive frameworks, all with standardized endpoints and comprehensive end-to-end testing.
 
 **Key Features:**
 - 🔍 **Deep JVM Introspection** - Comprehensive runtime analysis including memory, threading, GC, and performance metrics
-- 🌐 **Multi-Framework Support** - 5 different web frameworks with consistent APIs
-- ☁️ **Cloud-Native Ready** - Serverless deployments (Azure Functions, AWS Lambda) and containerization support
+- 🌐 **Multi-Framework Support** - 9 different web frameworks with standardized APIs
+- 🔄 **Standardized Endpoints** - Consistent `/jvm/inspect` and `/jvm/inspect.json` across all implementations
+- 🧪 **E2E Testing** - Comprehensive Playwright test suite covering all implementations
 - 🏗️ **Modern Architecture** - Maven multi-module project with centralized dependency management
 - 📊 **Rich Output Formats** - Both human-readable text and structured JSON outputs
-- 🚀 **Performance Focused** - Optimized for Java 21 with advanced JVM flag introspection
+- 🚀 **Performance Focused** - Optimized for Java 25 with advanced JVM flag introspection
+- 🐳 **Container Ready** - All implementations include Jib configuration for containerization
+- 🌍 **PORT Environment Variable** - All implementations support dynamic port configuration
 
 ## 🏛️ Project Architecture
 
@@ -22,19 +25,22 @@ This is a sophisticated Maven multi-module project with the following structure:
 showmyjvm/
 ├── 📋 bom/                    # Bill of Materials (dependency management)
 ├── 🧠 core/                   # Core JVM introspection library
-├── 🌸 spring-boot/           # Spring Boot 3.4.6 web application  
+├── 🌸 spring-boot/           # Spring Boot web application  
 ├── ⚡ sparkjava/             # SparkJava lightweight web framework
-├── 🔬 micronaut/             # Micronaut 3.10.4 framework implementation
-├── 🏃 quarkus/              # Quarkus 3.29.1 native-ready framework
+├── 🔬 micronaut/             # Micronaut framework implementation
+├── 🏃 quarkus/              # Quarkus native-ready framework
 ├── 📡 ratpack/              # Ratpack reactive web framework
-├── ☁️ azure-functions/      # Azure Functions serverless (Java 21)
-├── 🅰️ aws-lambda/           # AWS Lambda serverless implementation
-└── 📜 run-spring-boot.sh    # Convenience script for running Spring Boot
+├── ☕ javalin/              # Javalin simple web framework
+├── 🌊 helidon/              # Helidon SE (reactive)
+├── 🌊 helidon-mp/           # Helidon MP (MicroProfile)
+├── 🐱 tomcat/               # Apache Tomcat servlet implementation
+├── 🧪 e2e-tests/            # Playwright end-to-end test suite
+└── 📁 serverless/           # Serverless implementations (deprecated, moved here)
 ```
 
 ## 🔬 Core Functionality
 
-The `core` module provides comprehensive JVM introspection capabilities using Java 21 features:
+The `core` module provides comprehensive JVM introspection capabilities using Java 25 features:
 
 ### 🎛️ JVM Information Extracted
 - **Runtime Properties**: VM name, version, vendor, PID, input arguments
@@ -55,55 +61,80 @@ The `core` module provides comprehensive JVM introspection capabilities using Ja
 
 ## 🌐 Web Framework Implementations
 
-Each framework module demonstrates identical core functionality through different web technologies:
+All framework modules provide **standardized endpoints** and run on **port 8080** (configurable via PORT environment variable):
 
-### 🌸 Spring Boot (`/spring-boot`)
-- **Version**: Spring Boot 3.4.6 with Java 21
-- **Endpoints**: `/` and `/inspect` (text), `/inspect.json` (JSON)  
-- **Features**: Actuator integration, Jackson pretty printing, comprehensive JSON configuration
-- **Port**: 8080
+| Framework | Endpoints | Key Features |
+|-----------|-----------|--------------|
+| 🌸 **Spring Boot** | `/jvm/inspect`, `/jvm/inspect.json` | Actuator integration, Jackson pretty printing |
+| ⚡ **SparkJava** | `/jvm/inspect`, `/jvm/inspect.json` | Ultra-lightweight, minimal dependencies, fast startup |
+| 🔬 **Micronaut** | `/jvm/inspect`, `/jvm/inspect.json` | Compile-time DI, reflection-free, native-ready |
+| 🏃 **Quarkus** | `/jvm/inspect`, `/jvm/inspect.json` | Supersonic subatomic Java, Kubernetes-native, GraalVM support |
+| 📡 **Ratpack** | `/jvm/inspect`, `/jvm/inspect.json` | Reactive programming model, asynchronous non-blocking |
+| ☕ **Javalin** | `/jvm/inspect`, `/jvm/inspect.json` | Simple and lightweight, easy to use |
+| 🌊 **Helidon SE** | `/jvm/inspect`, `/jvm/inspect.json` | Reactive microservices framework |
+| 🌊 **Helidon MP** | `/jvm/inspect`, `/jvm/inspect.json` | MicroProfile implementation |
+| 🐱 **Tomcat** | `/jvm/inspect`, `/jvm/inspect.json` | Traditional servlet-based implementation |
 
-### ⚡ SparkJava (`/sparkjava`)
-- **Endpoints**: `/`, `/inspect` (text), `/jvminfo.json` (JSON)
-- **Features**: Ultra-lightweight, minimal dependencies, fast startup
-- **Port**: 8080
+### Standard Endpoints
 
-### 🔬 Micronaut (`/micronaut`)
-- **Version**: Micronaut 3.10.4 
-- **Endpoints**: `/`, `/inspect` (text), `/inspect.json` (JSON)
-- **Features**: Compile-time dependency injection, reflection-free, native-ready
-- **Port**: 8080
+All implementations support:
+- **`/jvm/inspect`** - Returns JVM details in plain text format (`text/plain`)
+- **`/jvm/inspect.json`** - Returns JVM details in JSON format (`application/json`)
 
-### 🏃 Quarkus (`/quarkus`)
-- **Version**: Quarkus 3.29.1
-- **Endpoints**: `/jvm/inspect` (text), `/jvm/inspect.json` (JSON)
-- **Features**: Supersonic subatomic Java, Kubernetes-native, GraalVM support
-- **Port**: 8080
+### Port Configuration
 
-### 📡 Ratpack (`/ratpack`)
-- **Endpoints**: `/`, `/inspect` (text only)
-- **Features**: Reactive programming model, asynchronous non-blocking
-- **Port**: 8080
+All implementations:
+- Default to **port 8080**
+- Support the **`PORT` environment variable** for dynamic configuration
+- Example: `PORT=9000 mvn spring-boot:run -pl spring-boot`
 
-## ☁️ Cloud Platform Implementations
+## 🧪 End-to-End Testing
 
-### ☁️ Azure Functions (`/azure-functions`)
-- **Runtime**: Java 21 on Linux consumption plan
-- **Trigger**: HTTP GET with function-level authorization  
-- **Endpoint**: `/inspect`
-- **Features**: Serverless execution, unique instance UUID tracking, Azure Functions runtime 4.x
-- **Versions**: Azure Functions Maven Plugin 1.40.0, Java Library 3.2.2
+The project includes a comprehensive **Playwright** test suite that validates all implementations:
 
-### 🅰️ AWS Lambda (`/aws-lambda`)
-- **Handler**: `io.brunoborges.showmyjvm.awslambda.Function`
-- **Features**: Serverless execution optimized for AWS Lambda runtime
-- **Input**: Integer (ignored)
-- **Output**: Complete JVM analysis as string
+### Test Coverage
+- ✅ Endpoint availability (both `/jvm/inspect` and `/jvm/inspect.json`)
+- ✅ Content-Type headers validation
+- ✅ Response format verification
+- ✅ Data consistency between text and JSON outputs
+- ✅ JVM information presence and accuracy
+
+### Running E2E Tests
+
+```bash
+# Install dependencies (first time only)
+cd e2e-tests
+npm install
+npx playwright install
+
+# Run all tests (requires implementations to be running)
+npm test
+
+# Test a specific implementation
+npm run test:spring-boot
+
+# Run tests with UI
+npm run test:ui
+
+# Run all implementations and test them
+npm run test:all
+```
+
+The `test-all.sh` script automatically starts each implementation, runs the tests, and stops the server.
+
+## 📁 Serverless Implementations (Deprecated)
+
+Serverless implementations have been moved to the `/serverless` directory and are no longer actively maintained:
+- Azure Functions (Java 21)
+- AWS Lambda
+
+These implementations are preserved for reference but not included in the main build.
 
 ## 🛠️ Prerequisites
 
-- **Java**: 21 (LTS) - *Required for all modules*
+- **Java**: 25 - *Required for all modules*
 - **Maven**: 3.9.1 or higher (enforced by project)
+- **Node.js**: 18+ (for E2E tests)
 - **Operating System**: Any (macOS, Linux, Windows)
 - **Memory**: Minimum 2GB RAM for building all modules
 - **Docker**: Optional, for containerization features
@@ -142,51 +173,31 @@ Each framework module demonstrates identical core functionality through differen
 
 ## 🚀 Running the Applications
 
-### 🎯 Option 1: Convenience Script (Recommended)
+All implementations support the **PORT environment variable** for dynamic port configuration.
+
+### Quick Start Commands
+
+| Framework | Command |
+|-----------|---------|
+| 🌸 **Spring Boot** | `mvn spring-boot:run -pl spring-boot` |
+| 🏃 **Quarkus** | `mvn quarkus:dev -pl quarkus` |
+| 🔬 **Micronaut** | `mvn mn:run -pl micronaut` |
+| 🌊 **Helidon SE** | `mvn exec:java -pl helidon` |
+| 🌊 **Helidon MP** | `mvn exec:java -pl helidon-mp` |
+| ☕ **Javalin** | `mvn exec:java -pl javalin` |
+| 📡 **Ratpack** | `mvn exec:java -pl ratpack` |
+| ⚡ **SparkJava** | `mvn exec:java -pl sparkjava` |
+| 🐱 **Tomcat** | `mvn cargo:run -pl tomcat` |
+
+### With Custom Port
+
 ```bash
-# Run Spring Boot with optimized settings
-./run-spring-boot.sh
+# Run on port 9000
+PORT=9000 mvn spring-boot:run -pl spring-boot
+
+# Run Tomcat on port 3000
+PORT=3000 mvn cargo:run -pl tomcat
 ```
-
-### ⚙️ Option 2: Maven Reactor (Fast)
-```bash
-# Leverages Maven reactor for dependency resolution
-./mvnw spring-boot:run -pl spring-boot -am
-```
-
-### 🔧 Option 3: Traditional Approach
-```bash
-# Install dependencies first, then run
-./mvnw install
-cd spring-boot
-../mvnw spring-boot:run
-```
-
-### 🌐 Running Other Frameworks
-
-#### 🔬 Micronaut
-```bash
-./mvnw compile exec:java -pl micronaut -am \
-  -Dexec.mainClass="io.brunoborges.showmyjvm.micronaut.Application"
-```
-
-#### ⚡ SparkJava  
-```bash
-./mvnw compile exec:java -pl sparkjava -am \
-  -Dexec.mainClass="io.brunoborges.showmyjvm.sparkjava.SparkStart"
-```
-
-#### 🏃 Quarkus (Development Mode)
-```bash
-# Hot reload development mode
-./mvnw quarkus:dev -pl quarkus -am
-
-# Production mode
-./mvnw compile exec:java -pl quarkus -am \
-  -Dexec.mainClass="io.quarkus.runner.GeneratedMain"
-```
-
-#### 📡 Ratpack
 ```bash
 ./mvnw compile exec:java -pl ratpack -am \
   -Dexec.mainClass="io.brunoborges.showmyjvm.ratpack.RatpackStart"
@@ -194,21 +205,33 @@ cd spring-boot
 
 ## 🧪 Testing the Applications
 
-Once any web application is running, test the comprehensive endpoints:
+Once any web application is running, test using the **standardized endpoints**:
 
 ```bash
-# Basic JVM information (human-readable)
-curl http://localhost:8080/inspect
-
-# Structured JSON output (where supported)
-curl http://localhost:8080/inspect.json | jq '.'
-
-# Health check for Spring Boot
-curl http://localhost:8080/actuator/health
-
-# Quarkus-specific endpoints
+# Plain text output
 curl http://localhost:8080/jvm/inspect
-curl http://localhost:8080/jvm/inspect.json
+
+# JSON output  
+curl http://localhost:8080/jvm/inspect.json | jq '.'
+
+# With custom port
+PORT=9000 mvn spring-boot:run -pl spring-boot
+curl http://localhost:9000/jvm/inspect
+```
+
+### Running End-to-End Tests
+
+```bash
+# Start an implementation first
+mvn spring-boot:run -pl spring-boot
+
+# In another terminal, run tests
+cd e2e-tests
+npm install  # First time only
+npm test
+
+# Test all implementations automatically
+npm run test:all
 ```
 
 ### 📋 Sample Output Sections
@@ -224,21 +247,28 @@ The JVM analysis includes comprehensive sections:
 
 ## 🐳 Containerization
 
-All web framework modules support modern containerization using Google Jib:
+All web framework modules include Jib configuration for containerization:
 
 ```bash
-# Build optimized Docker image for Spring Boot
-./mvnw clean package jib:dockerBuild -pl spring-boot -am
+# Build Docker images for all implementations
+mvn clean package -DskipTests
 
-# Build multi-stage container for Micronaut
-./mvnw clean package jib:dockerBuild -pl micronaut -am
+# Build specific implementation
+mvn clean package jib:dockerBuild -pl spring-boot
 
-# Run with optimized JVM settings
-docker run -p 8080:8080 -e JAVA_OPTS="-XX:+UseG1GC -XX:MaxRAMPercentage=75" \
-  showmyjvm-springboot
+# Run containerized application with custom port
+docker run -p 9000:8080 -e PORT=8080 showmyjvm-spring-boot
 
-# Kubernetes deployment
-kubectl apply -f k8s/deployment.yaml
+# All available images:
+# - showmyjvm-spring-boot
+# - showmyjvm-quarkus
+# - showmyjvm-micronaut
+# - showmyjvm-helidon
+# - showmyjvm-helidon-mp
+# - showmyjvm-javalin
+# - showmyjvm-ratpack
+# - showmyjvm-sparkjava
+# - showmyjvm-tomcat
 ```
 
 ## 🔒 Advanced JVM Flags Access
@@ -247,61 +277,27 @@ For complete JVM flags information, run with additional module access:
 
 ```bash
 # Enable full flag introspection
-./mvnw spring-boot:run -pl spring-boot -am \
+mvn spring-boot:run -pl spring-boot \
   -Dspring-boot.run.jvmArguments="--add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED"
-
-# With GraalVM native image preparation
-./mvnw quarkus:build -pl quarkus -am -Pnative \
-  -Dquarkus.native.additional-build-args="--add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED"
-```
-
-## ☁️ Cloud Deployment
-
-### ☁️ Azure Functions Deployment
-```bash
-cd azure-functions
-
-# Deploy to Azure (requires Azure CLI)
-../mvnw azure-functions:deploy
-
-# Local testing with Azure Functions Core Tools
-func start --java
-```
-
-### 🅰️ AWS Lambda Deployment
-```bash
-cd aws-lambda
-
-# Package for Lambda deployment
-../mvnw clean package
-
-# Deploy using AWS CLI
-aws lambda update-function-code \
-  --function-name showmyjvm \
-  --zip-file fileb://target/showmyjvm-aws-lambda-1.0.0-SNAPSHOT.jar
-```
-
-### 🐙 Azure Container Instances
-```bash
-# Deploy Spring Boot to Azure Container Instances
-az container create \
-  --resource-group showmyjvm-rg \
-  --name showmyjvm-spring \
-  --image showmyjvm-springboot \
-  --ports 8080
 ```
 
 ## ⭐ Key Features & Benefits
 
-### 🏗️ **Multi-Framework Architecture**
-- Demonstrates identical core functionality across 5+ modern web frameworks
+### 🏗️ **Standardized Multi-Framework Architecture**
+- Demonstrates identical core functionality across 9 modern web frameworks
+- **Standardized endpoints** (`/jvm/inspect` and `/jvm/inspect.json`) across all implementations
+- **Consistent PORT environment variable** support for dynamic configuration
 - Framework-specific optimizations and JSON handling
-- Consistent REST API patterns across all implementations
 
-### ☁️ **Cloud-Native Excellence**
-- Native compilation support (Quarkus, Micronaut)
-- Optimized serverless deployment (Azure Functions, AWS Lambda)
-- Production-ready containerization with Jib integration
+### 🧪 **Comprehensive Testing**
+- **Playwright E2E test suite** covering all 9 implementations
+- Automated testing with `test-all.sh` script
+- Validates endpoint availability, content types, and data consistency
+
+### 🐳 **Container-Ready**
+- **Jib integration** for all implementations
+- Optimized Docker image builds without Docker daemon
+- Ready for Kubernetes, Azure Container Instances, and other container platforms
 
 ### 🔍 **Advanced JVM Analysis**
 - Deep runtime introspection using Java Management Extensions (JMX)
@@ -311,48 +307,45 @@ az container create \
 ### 👩‍💻 **Developer Experience**
 - Maven reactor builds for efficient development workflow
 - Centralized dependency management via Bill of Materials (BOM)
-- Convenient automation scripts and comprehensive documentation
+- PORT environment variable support across all implementations
+- Comprehensive documentation and testing infrastructure
 
 ## 🏗️ Maven Multi-Module Architecture
 
 The project demonstrates sophisticated Maven practices:
 
 - **🏠 Parent POM**: Coordinates all modules with Maven 3.9.1+ enforcement
-- **📋 BOM Module**: Centralizes dependency versions and plugin configurations (Java 21)
+- **📋 BOM Module**: Centralizes dependency versions and plugin configurations (Java 25)
 - **⚙️ Reactor Builds**: Ensures proper dependency resolution across modules  
 - **🎯 Focused Modules**: Each framework optimized for its specific use case
 - **🔄 Plugin Management**: Consistent build lifecycle across all modules
-
-## 🔄 Dependency Management
-
-All dependencies are carefully managed and regularly updated:
-
-- **Spring Boot**: 3.4.6 (latest stable)
-- **Quarkus**: 3.29.1 (latest LTS)
-- **Micronaut**: 3.10.4 (stable release)
-- **Azure Functions**: Java Library 3.2.2, Maven Plugin 1.40.0
-- **Build Tools**: Jib 3.4.6, Surefire 3.5.2, Compiler 3.13.0
-- **Testing**: JUnit 5.11.4, Mockito 5.20.0
+- **🐳 Jib Integration**: Unified container image building across all implementations
 
 ## 📊 Project Statistics
 
-- **Java Version**: 21 (LTS)
-- **Maven Modules**: 9 modules 
-- **Web Frameworks**: 5 different implementations
-- **Cloud Platforms**: 2 serverless platforms
-- **Container Support**: Jib + Docker
-- **Test Coverage**: Comprehensive unit testing
-- **Documentation**: Extensive README and inline docs
+- **Java Version**: 25
+- **Maven Modules**: 11 modules (core, bom, 9 implementations)
+- **Web Frameworks**: 9 different implementations with standardized APIs
+- **Container Support**: Jib configuration for all implementations
+- **Test Coverage**: Comprehensive E2E tests with Playwright
+- **Standardized Endpoints**: `/jvm/inspect` and `/jvm/inspect.json` across all implementations
+- **PORT Support**: All implementations support dynamic port configuration
 
 ## 🤝 Contributing
 
 This project serves as a comprehensive reference for:
-- Modern Java development practices (Java 21 features)
-- Maven multi-module project organization
+- Modern Java development practices (Java 25 features)
+- Maven multi-module project organization and BOM patterns
 - JVM introspection and performance analysis techniques
-- Framework comparison and implementation patterns
-- Cloud-native application development and deployment
-- Containerization best practices with modern tooling
+- Framework comparison and standardization across implementations
+- End-to-end testing with Playwright
+- Containerization best practices with Jib
+- Environment variable configuration patterns
+
+## 📚 Related Documentation
+
+- [STANDARDIZATION.md](STANDARDIZATION.md) - Detailed endpoint and port standardization documentation
+- [e2e-tests/README.md](e2e-tests/README.md) - E2E testing guide and implementation details
 
 ## 📄 License
 
