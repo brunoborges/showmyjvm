@@ -1,7 +1,6 @@
 
 package io.helidon.examples.quickstart.se;
 
-import io.helidon.config.Config;
 import io.helidon.http.media.MediaContextConfig.BuilderBase;
 import io.helidon.http.media.jsonb.JsonbSupport;
 import io.helidon.logging.common.LogConfig;
@@ -13,11 +12,11 @@ public class Main {
     public static void main(String[] args) {
         LogConfig.configureRuntime();
 
-        var config = Config.create();
+        int port = System.getenv("PORT") != null ? Integer.parseInt(System.getenv("PORT")) : 8080;
+
         var server = WebServer.builder()
-                .config(config.get("server"))
-                .mediaContext(Main::mediaSupport)
-                .routing(Main::routing).build().start();
+                .port(port)
+                .mediaContext(Main::mediaSupport).routing(Main::routing).build().start();
 
         System.out.println("WEB server is up! http://localhost:" + server.port() + "/");
     }

@@ -1,7 +1,7 @@
-<?xml version="1.0"?>
-<project
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"
-  xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -47,6 +47,10 @@
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
     </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-container-image-jib</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
@@ -88,35 +92,7 @@
           </systemPropertyVariables>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>com.google.cloud.tools</groupId>
-        <artifactId>jib-maven-plugin</artifactId>
-        <configuration>
-          <to>
-            <image>showmyjvm-quarkus</image>
-          </to>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
-
-  <profiles>
-    <profile>
-      <id>container-images</id>
-      <activation>
-        <property>
-          <name>docker</name>
-        </property>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>com.spotify</groupId>
-            <artifactId>dockerfile-maven-plugin</artifactId>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 
 </project>
