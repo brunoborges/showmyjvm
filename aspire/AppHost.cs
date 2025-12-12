@@ -21,6 +21,8 @@ builder.AddContainer("tomcat", "showmyjvm-tomcat:latest").WithHttpEndpoint(port:
 // tomcat -> mvn cargo:run
 
 // It may also be possible to run using java -jar {jarfile}.jar if the framework supports it (meaning, it produces an executable jar)
+// An executable jar is one with a main class defined in the MANIFEST.MF file and all dependencies bundled within the jar
+// However, some frameworks may require additional configuration or dependencies to run properly using java -jar
 
 // Services like e.g. Redis, databases, message brokers, etc. can also be added here if needed
 // Each framework may have its own way of connecting to these services using environment variables or configuration files
