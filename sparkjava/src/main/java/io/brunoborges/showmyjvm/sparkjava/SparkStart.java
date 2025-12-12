@@ -3,7 +3,7 @@ package io.brunoborges.showmyjvm.sparkjava;
 import static spark.Spark.get;
 import static spark.Spark.port;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.brunoborges.showmyjvm.core.ShowJVM;
 
@@ -20,8 +20,8 @@ public class SparkStart {
 
         get("/jvm/inspect.json", (req, res) -> {
             res.type("application/json");
-            var gson = new Gson();
-            return gson.toJson(new ShowJVM().extractJVMDetails());
+            var objectMapper = new ObjectMapper();
+            return objectMapper.writeValueAsString(new ShowJVM().extractJVMDetails());
         });
     }
 
