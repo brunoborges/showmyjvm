@@ -7,14 +7,6 @@ import { test, expect } from '@playwright/test';
  * - /jvm/inspect (plain text)
  * - /jvm/inspect.json (JSON format)
  * 
- * All implementations should run on port 8080
- * 
- * Run tests for a specific implementation:
- *   npx playwright test --project=tomcat
- *   npx playwright test --project=spring-boot
- * 
- * Or test all (assuming you start/stop each implementation):
- *   npx playwright test
  */
 
 test.describe('ShowMyJVM endpoints', () => {

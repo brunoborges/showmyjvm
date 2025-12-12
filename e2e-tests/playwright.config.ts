@@ -14,40 +14,7 @@ export default defineConfig({
 
   projects: [
     {
-      name: 'helidon',
+      name: 'showmyjvm',
       use: { ...devices['Desktop Chrome'] },
-    },
-    {
-      name: 'helidon-mp',
-      use: { ...devices['Desktop Chrome'] },
-    },
-    {
-      name: 'javalin',
-      use: { ...devices['Desktop Chrome'] },
-    },
-    {
-      name: 'micronaut',
-      use: { ...devices['Desktop Chrome'] },
-    },
-    {
-      name: 'quarkus',
-      use: { ...devices['Desktop Chrome'] },
-    },
-    {
-      name: 'ratpack',
-      use: { ...devices['Desktop Chrome'] },
-    },
-    {
-      name: 'sparkjava',
-      use: { ...devices['Desktop Chrome'] },
-    },
-    {
-      name: 'spring-boot',
-      use: { ...devices['Desktop Chrome'] },
-    },
-    {
-      name: 'tomcat',
-      use: { ...devices['Desktop Chrome'] },
-    },
-  ],
+    }],
 });

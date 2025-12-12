@@ -89,7 +89,7 @@ mvn spring-boot:run -pl spring-boot
 
 ### Quarkus
 ```bash
-mvn quarkus:dev -pl quarkus
+mvn quarkus:run -pl quarkus
 ```
 
 ### Micronaut

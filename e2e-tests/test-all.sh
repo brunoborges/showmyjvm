@@ -22,7 +22,7 @@ get_maven_command() {
   case "$1" in
     tomcat) echo "cargo:run" ;;
     spring-boot) echo "spring-boot:run" ;;
-    quarkus) echo "quarkus:dev" ;;
+    quarkus) echo "quarkus:run" ;;
     micronaut) echo "mn:run" ;;
     helidon) echo "exec:exec" ;;
     helidon-mp) echo "exec:exec" ;;

@@ -12,7 +12,7 @@ builder.AddContainer("tomcat", "showmyjvm-tomcat:latest").WithHttpEndpoint(port:
 
 // helidon -> mvn exec:exec
 // helidon-mp -> mvn exec:exec
-// quarkus -> mvn quarkus:dev
+// quarkus -> mvn quarkus:run
 // javalin -> mvn exec:java
 // spring-boot -> mvn spring-boot:run
 // micronaut -> mvn mn:run
