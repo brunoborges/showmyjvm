@@ -96,7 +96,7 @@ for impl in "${IMPLEMENTATIONS[@]}"; do
   # Run the tests
   echo "🧪 Running tests for $impl..."
   cd "$SCRIPT_DIR"
-  if npx playwright test --project="$impl" --reporter=list; then
+  if npx playwright test --reporter=list; then
     echo "✅ Tests passed for $impl"
     PASSED_TESTS+=("$impl")
   else
