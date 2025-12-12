@@ -33,7 +33,7 @@ jobs:
       run: ./mvnw -B clean package -DskipTests
 
     - name: Install Core
-      run: ./mvnw -B install -DskipTests -pl core
+      run: ./mvnw -B install -DskipTests -pl bom,core
 
     - name: Tomcat Specific Cargo Container Installation
       run: ./mvnw -B cargo:configure -pl tomcat -DskipTests 
