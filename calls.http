@@ -1,2 +1,5 @@
 ### Local
-GET http://localhost:8080/inspect
+GET http://localhost:8080/jvm/inspect
+
+### json
+GET http://localhost:8080/jvm/inspect.json
