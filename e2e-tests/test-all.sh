@@ -33,12 +33,26 @@ get_maven_command() {
   esac
 }
 
+# Function to kill all processes on port 8080
+kill_port_8080() {
+  echo "🔍 Checking for processes on port 8080..."
+  PID=$(lsof -ti :8080) || true
+  if [ -n "$PID" ]; then
+    echo "🛑 Killing process(es) on port 8080: $PID"
+    kill -9 $PID 2>/dev/null || true
+    sleep 2
+  fi
+}
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 echo "🚀 Testing all ShowMyJVM implementations..."
 echo "Project root: $PROJECT_ROOT"
 echo ""
+
+# Clean up any existing processes on port 8080
+kill_port_8080
 
 FAILED_TESTS=()
 PASSED_TESTS=()
@@ -64,7 +78,8 @@ for impl in "${IMPLEMENTATIONS[@]}"; do
     fi
     if [ $i -eq 30 ]; then
       echo "❌ $impl failed to start within 30 seconds"
-      kill $APP_PID 2>/dev/null || true
+      kill -9 $APP_PID 2>/dev/null || true
+      kill_port_8080
       FAILED_TESTS+=("$impl (startup failed)")
       continue 2
     fi
@@ -84,12 +99,19 @@ for impl in "${IMPLEMENTATIONS[@]}"; do
   
   # Stop the application
   echo "⏹️  Stopping $impl..."
-  kill $APP_PID 2>/dev/null || true
+  kill -9 $APP_PID 2>/dev/null || true
+  kill_port_8080
   
   # Wait for port to be free
+  echo "⏳ Waiting for port 8080 to be free..."
   for i in {1..10}; do
     if ! lsof -Pi :8080 -sTCP:LISTEN -t >/dev/null 2>&1; then
+      echo "✅ Port 8080 is free"
       break
+    fi
+    if [ $i -eq 10 ]; then
+      echo "⚠️  Port 8080 still in use, forcing cleanup..."
+      kill_port_8080
     fi
     sleep 1
   done
@@ -116,8 +138,12 @@ if [ ${#FAILED_TESTS[@]} -gt 0 ]; then
     echo "   - $impl"
   done
   echo ""
+  # Final cleanup
+  kill_port_8080
   exit 1
 else
   echo "🎉 All tests passed!"
+  # Final cleanup
+  kill_port_8080
   exit 0
 fi
