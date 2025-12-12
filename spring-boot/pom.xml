@@ -16,7 +16,7 @@
     <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>ShowMyJVM with Spring Boot</name>
+    <name>ShowMyJVM with Spring Boot REST API</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>

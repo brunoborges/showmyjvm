@@ -16,7 +16,7 @@
     <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>ShowMyJVM with Micronaut</name>
+    <name>ShowMyJVM with Micronaut REST API</name>
     <description>Demo project for Micronaut</description>
 
     <properties>

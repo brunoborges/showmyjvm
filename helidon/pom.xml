@@ -12,6 +12,7 @@
     <groupId>io.helidon.examples</groupId>
     <artifactId>helidon</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <name>ShowMyJVM with Helidon SE</name>
 
     <properties>
         <mainClass>io.helidon.examples.quickstart.se.Main</mainClass>

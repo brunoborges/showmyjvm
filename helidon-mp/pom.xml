@@ -12,6 +12,7 @@
     <groupId>io.helidon.examples</groupId>
     <artifactId>helidon-mp</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <name>ShowMyJVM with Helidon MP</name>
 
     <dependencies>
         <dependency>

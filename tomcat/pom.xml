@@ -12,6 +12,7 @@
 
     <artifactId>showmyjvm-tomcat</artifactId>
     <packaging>war</packaging>
+    <name>ShowMyJVM with Tomcat</name>
 
     <properties>
         <java.version>25</java.version>

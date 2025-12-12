@@ -9,7 +9,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>showmyjvm.micronaut</groupId>
   <artifactId>showmyjvm-micronaut</artifactId>
-  <name>ShowMyJVM with Micronaut</name>
+  <name>ShowMyJVM with Micronaut REST API</name>
   <version>1.0.0-SNAPSHOT</version>
   <description>Demo project for Micronaut</description>
   <build>
