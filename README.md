@@ -73,7 +73,7 @@ All framework modules provide **standardized endpoints** and run on **port 8080*
 | ☕ **Javalin** | `/jvm/inspect`, `/jvm/inspect.json` | Simple and lightweight, easy to use |
 | 🌊 **Helidon SE** | `/jvm/inspect`, `/jvm/inspect.json` | Reactive microservices framework |
 | 🌊 **Helidon MP** | `/jvm/inspect`, `/jvm/inspect.json` | MicroProfile implementation |
-| 🐱 **Tomcat** | `/jvm/inspect`, `/jvm/inspect.json` | Traditional servlet-based implementation |
+| 🐱 **Tomcat** | `/jvm/inspect`, `/jvm/inspect.json` | Traditional servlet-based (Tomcat 11, Jakarta EE 11) |
 
 ### Standard Endpoints
 
