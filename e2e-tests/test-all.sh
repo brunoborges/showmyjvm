@@ -46,9 +46,16 @@ kill_port_8080() {
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+MAVEN_CMD="$PROJECT_ROOT/mvnw"
+
+# Check if mvnw exists, otherwise fall back to mvn
+if [ ! -f "$MAVEN_CMD" ]; then
+  MAVEN_CMD="mvn"
+fi
 
 echo "🚀 Testing all ShowMyJVM implementations..."
 echo "Project root: $PROJECT_ROOT"
+echo "Maven command: $MAVEN_CMD"
 echo ""
 
 # Clean up any existing processes on port 8080
@@ -65,8 +72,8 @@ for impl in "${IMPLEMENTATIONS[@]}"; do
   # Start the application in the background
   echo "▶️  Starting $impl..."
   cd "$PROJECT_ROOT"
-  MAVEN_CMD=$(get_maven_command "$impl")
-  mvn "$MAVEN_CMD" -pl "$impl" > "/tmp/showmyjvm-$impl.log" 2>&1 &
+  MAVEN_GOAL=$(get_maven_command "$impl")
+  $MAVEN_CMD "$MAVEN_GOAL" -pl "$impl" > "/tmp/showmyjvm-$impl.log" 2>&1 &
   APP_PID=$!
   
   # Wait for the application to start (check if port 8080 is listening)
