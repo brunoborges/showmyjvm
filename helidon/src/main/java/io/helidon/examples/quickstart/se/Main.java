@@ -10,9 +10,6 @@ import io.helidon.webserver.http.HttpRouting;
 
 public class Main {
 
-    private Main() {
-    }
-
     public static void main(String[] args) {
         LogConfig.configureRuntime();
 
@@ -32,6 +29,6 @@ public class Main {
     }
 
     static void routing(HttpRouting.Builder routing) {
-        routing.register("/", new ShowMyJVMService());
+        routing.register("/jvm", new ShowMyJVMService());
     }
 }

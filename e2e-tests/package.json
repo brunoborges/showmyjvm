@@ -1,0 +1,24 @@
+{
+  "name": "showmyjvm-e2e-tests",
+  "version": "1.0.0",
+  "description": "E2E tests for ShowMyJVM implementations",
+  "scripts": {
+    "test": "playwright test",
+    "test:all": "./test-all.sh",
+    "test:ui": "playwright test --ui",
+    "test:headed": "playwright test --headed",
+    "test:helidon": "playwright test --project=helidon",
+    "test:helidon-mp": "playwright test --project=helidon-mp",
+    "test:javalin": "playwright test --project=javalin",
+    "test:micronaut": "playwright test --project=micronaut",
+    "test:quarkus": "playwright test --project=quarkus",
+    "test:ratpack": "playwright test --project=ratpack",
+    "test:sparkjava": "playwright test --project=sparkjava",
+    "test:spring-boot": "playwright test --project=spring-boot",
+    "test:tomcat": "playwright test --project=tomcat"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.48.0",
+    "@types/node": "^22.0.0"
+  }
+}

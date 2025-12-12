@@ -19,11 +19,10 @@
         <module>spring-boot</module>
         <module>micronaut</module>
         <module>quarkus</module>
-        <!--
-        <module>azure-functions</module>
-        <module>aws-lambda</module>
-        -->
         <module>helidon</module>
+        <module>helidon-mp</module>
+        <module>tomcat</module>
+        <module>ratpack</module>
     </modules>
     <build>
         <pluginManagement>

@@ -9,16 +9,16 @@ import spark.Route;
 public class SparkStart {
 
     public static void main(String args[]) {
-        port(8080);
+        int port = System.getenv("PORT") != null ? Integer.parseInt(System.getenv("PORT")) : 8080;
+        port(port);
         Route function = (req, res) -> {
             res.type("text/plain");
             return new ShowJVM().dumpJVMDetails();
         };
-        get("/", function);
-        get("/inspect", function);
-        get("/jvminfo.json", (req, res) -> {
+        get("/jvm/inspect", function);
+        get("/jvm/inspect.json", (req, res) -> {
             res.type("application/json");
-            return new ShowJVM().dumpJVMDetails();
+            return new ShowJVM().extractJVMDetails();
         });
     }
 

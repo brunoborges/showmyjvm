@@ -70,6 +70,7 @@
         <version>4.11.4</version>
         <configuration>
           <mainClass>${exec.mainClass}</mainClass>
+          <testResourcesVersion>4.11.4</testResourcesVersion>
         </configuration>
       </plugin>
       <plugin>
@@ -125,6 +126,7 @@
     <micronaut.validation.version>4.11.0</micronaut.validation.version>
     <micronaut.core.version>4.7.1</micronaut.core.version>
     <exec.mainClass>io.brunoborges.showmyjvm.micronaut.Application</exec.mainClass>
+    <micronaut.test.resources.version>2.9.2</micronaut.test.resources.version>
     <java.version>25</java.version>
   </properties>
 </project>

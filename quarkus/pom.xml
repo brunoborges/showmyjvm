@@ -18,7 +18,7 @@
   <description>A simple Quarkus REST API to expose the JVM details.</description>
 
   <properties>
-    <quarkus.platform.version>3.29.1</quarkus.platform.version>
+    <quarkus.platform.version>3.30.3</quarkus.platform.version>
     <java.version>25</java.version>
   </properties>
 
@@ -86,6 +86,15 @@
             <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
             <maven.home>${maven.home}</maven.home>
           </systemPropertyVariables>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>com.google.cloud.tools</groupId>
+        <artifactId>jib-maven-plugin</artifactId>
+        <configuration>
+          <to>
+            <image>showmyjvm-quarkus</image>
+          </to>
         </configuration>
       </plugin>
     </plugins>

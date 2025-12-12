@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.brunoborges.showmyjvm</groupId>
+        <artifactId>showmyjvm-bom</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../bom</relativePath>
+    </parent>
+
+    <groupId>io.brunoborges.showmyjvm</groupId>
+    <artifactId>showmyjvm-javalin</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <properties>
+        <exec.mainClass>io.brunoborges.showmyjvm.javalin.Application</exec.mainClass>
+        <java.version>25</java.version>
+    </properties>
+
+    <name>ShowMyJVM with Javalin REST API</name>
+    <description>A simple Javalin REST API to expose the JVM details.</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.brunoborges.showmyjvm</groupId>
+            <artifactId>showmyjvm-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.javalin</groupId>
+            <artifactId>javalin</artifactId>
+            <version>6.7.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.20.1</version>
+        </dependency>
+
+        <!-- SLF4J -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <configuration>
+                    <to>
+                        <image>showmyjvm-javalin</image>
+                    </to>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
