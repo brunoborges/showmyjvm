@@ -318,12 +318,16 @@
 
         function usageBar(label, usage) {
             const wrap = el('div');
-            const max = usage && usage.max > 0 ? usage.max : (usage ? usage.committed : 0);
+            // Without a defined max (reported as -1) the bar shows used vs. committed; committed always
+            // tracks used closely, so warning colors would be misleading and only apply to a real limit.
+            const hasMax = !!usage && usage.max > 0;
+            const max = hasMax ? usage.max : (usage ? usage.committed : 0);
             const ratio = max > 0 ? usage.used / max : 0;
             const lbl = el('div', null, 'bar-label');
-            lbl.append(el('span', label), track(el('span', bytes(usage && usage.used) + ' / ' + bytes(usage && usage.max)), 'mem:' + label + ':used'));
+            const value = bytes(usage && usage.used) + ' / ' + (hasMax ? bytes(usage.max) : bytes(usage && usage.committed) + ' committed (no max)');
+            lbl.append(el('span', label), track(el('span', value), 'mem:' + label + ':used'));
             const bar = el('div', null, 'bar');
-            const fill = el('div', null, ratio > 0.9 ? 'danger' : ratio > 0.75 ? 'warn' : '');
+            const fill = el('div', null, !hasMax ? '' : ratio > 0.9 ? 'danger' : ratio > 0.75 ? 'warn' : '');
             fill.style.width = Math.min(100, ratio * 100).toFixed(1) + '%';
             bar.append(fill);
             const details = el('div', 'init ' + bytes(usage && usage.init) + ' · committed ' + bytes(usage && usage.committed), 'muted');
