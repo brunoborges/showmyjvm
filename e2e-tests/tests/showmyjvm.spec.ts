@@ -6,6 +6,7 @@ import { test, expect } from '@playwright/test';
  * These tests verify that each framework implementation exposes the required endpoints:
  * - /jvm/inspect (plain text)
  * - /jvm/inspect.json (JSON format)
+ * - /index.html (shared web UI, packaged in the web-ui module)
  * 
  */
 
@@ -47,6 +48,27 @@ test.describe('ShowMyJVM endpoints', () => {
     expect(body).toHaveProperty('vmVersion');
     expect(body).toHaveProperty('osName');
     expect(body).toHaveProperty('osVersion');
+  });
+
+});
+
+test.describe('ShowMyJVM shared web UI', () => {
+
+  test('should serve /index.html as HTML', async ({ request }) => {
+    const response = await request.get('/index.html');
+
+    expect(response.ok()).toBeTruthy();
+    expect(response.headers()['content-type']).toContain('text/html');
+  });
+
+  test('should render JVM details fetched from the REST API', async ({ page }) => {
+    await page.goto('/index.html');
+
+    await expect(page.locator('#status')).toContainText('Updated');
+    await expect(page.locator('#runtime')).toContainText(/VM version/);
+    await expect(page.locator('#runtime dd').first()).not.toHaveText('—');
+    await expect(page.locator('#os')).toContainText(/Architecture/);
+    await expect(page.locator('#pools tr').first()).toBeVisible();
   });
 
 });

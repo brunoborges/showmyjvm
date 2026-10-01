@@ -40,6 +40,10 @@
       <artifactId>showmyjvm-core</artifactId>
     </dependency>
     <dependency>
+      <groupId>io.brunoborges.showmyjvm</groupId>
+      <artifactId>showmyjvm-web-ui</artifactId>
+    </dependency>
+    <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-rest-jackson</artifactId>
     </dependency>

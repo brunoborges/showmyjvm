@@ -2,6 +2,7 @@ package io.brunoborges.showmyjvm.javalin;
 
 import io.brunoborges.showmyjvm.core.ShowJVM;
 import io.javalin.Javalin;
+import io.javalin.http.staticfiles.Location;
 import io.javalin.json.JavalinJackson3;
 
 public class Application {
@@ -11,6 +12,7 @@ public class Application {
 
         var app = Javalin.create(config -> {
             config.jsonMapper(new JavalinJackson3());
+            config.staticFiles.add("/META-INF/resources", Location.CLASSPATH);
             config.routes.get("/jvm/inspect", ctx -> {
                 ctx.contentType("text/plain");
                 ctx.result(new ShowJVM().dumpJVMDetails());

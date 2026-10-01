@@ -1,3 +1,9 @@
 server:
   port: ${PORT:8080}
   host: 0.0.0.0
+  features:
+    static-content:
+      classpath:
+        - context: /
+          location: /META-INF/resources
+          welcome: index.html

@@ -26,6 +26,7 @@ This is a sophisticated Maven multi-module project with the following structure:
 showmyjvm/
 ├── 📋 bom/                    # Bill of Materials (dependency management)
 ├── 🧠 core/                   # Core JVM introspection library
+├── 🖼️ web-ui/                 # Shared web interface (index.html) reused by all frameworks
 ├── 🌸 spring-boot/           # Spring Boot web application
 ├── ⚡ sparkjava/             # SparkJava lightweight web framework
 ├── 🔬 micronaut/             # Micronaut framework implementation
@@ -77,6 +78,24 @@ All implementations support:
 
 - **`/jvm/inspect`** - Returns JVM details in plain text format (`text/plain`)
 - **`/jvm/inspect.json`** - Returns JVM details in JSON format (`application/json`)
+- **`/`** and **`/index.html`** - Shared web dashboard that calls `/jvm/inspect.json` from the browser
+
+### Shared Web UI
+
+The web interface lives in a single place: the `web-ui` module. It is a resource-only JAR that packages
+`index.html` under `META-INF/resources/` (the Servlet 3.0+ resource JAR / WebJars convention), and every
+framework module simply depends on `showmyjvm-web-ui`. Serving it requires little or no code:
+
+| Framework              | How `META-INF/resources/index.html` is served                                  |
+| ---------------------- | ------------------------------------------------------------------------------ |
+| Spring Boot, Quarkus, Tomcat | Automatically (built-in support for `META-INF/resources` on the classpath) |
+| Micronaut              | `micronaut.router.static-resources` in `application.yml`                       |
+| Helidon SE             | `StaticContentFeature` classpath service registered in `Main`                  |
+| Helidon MP             | `server.features.static-content` in `application.yaml`                         |
+| Javalin                | `config.staticFiles.add("/META-INF/resources", Location.CLASSPATH)`            |
+| Ratpack, SparkJava     | A small handler that streams the classpath resource                            |
+
+The page uses relative URLs, so it also works when deployed under a servlet context path.
 
 ### Port Configuration
 
@@ -93,6 +112,7 @@ The project includes a comprehensive **Playwright** test suite that validates al
 ### Test Coverage
 
 - ✅ Endpoint availability (both `/jvm/inspect` and `/jvm/inspect.json`)
+- ✅ Shared web UI (`/index.html`) renders data fetched from the REST API
 - ✅ Content-Type headers validation
 - ✅ Response format verification
 - ✅ Data consistency between text and JSON outputs

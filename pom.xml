@@ -15,6 +15,7 @@
     <modules>
         <module>bom</module>
         <module>core</module>
+        <module>web-ui</module>
         <module>sparkjava</module>
         <module>spring-boot</module>
         <module>micronaut</module>

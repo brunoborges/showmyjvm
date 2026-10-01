@@ -3,3 +3,9 @@ micronaut:
         name: showmyjvm-micronaut
     server:
         port: ${PORT:8080}
+    router:
+        static-resources:
+            default:
+                enabled: true
+                mapping: /**
+                paths: classpath:META-INF/resources
