@@ -15,6 +15,7 @@
             --accent-soft: #e3f0fc;
             --warn: #d97706;
             --danger: #dc2626;
+            --changed: #fde68a;
             --mono: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
         }
 
@@ -27,6 +28,7 @@
                 --border: #2d3843;
                 --accent: #4da3ff;
                 --accent-soft: #1c2f44;
+                --changed: #5c4a10;
             }
         }
 
@@ -140,6 +142,8 @@
 
         .muted { color: var(--muted); }
 
+        .changed { background: var(--changed); border-radius: 3px; box-shadow: 0 0 0 2px var(--changed); }
+
         #status { font-size: 0.85rem; color: var(--muted); }
         #status.error { color: var(--danger); }
 
@@ -160,6 +164,7 @@
         <label>Auto
             <select id="auto">
                 <option value="0">off</option>
+                <option value="500">500ms</option>
                 <option value="2000">2s</option>
                 <option value="5000">5s</option>
                 <option value="10000">10s</option>
@@ -261,12 +266,27 @@
         const $ = (id) => document.getElementById(id);
         let latest = null;
         let timer = null;
+        let inFlight = false;
+
+        // Displayed text of every tracked value, keyed by a stable id, for the previous and current refresh.
+        let previousValues = new Map();
+        let currentValues = new Map();
 
         function el(tag, text, className) {
             const e = document.createElement(tag);
             if (text !== undefined && text !== null) e.textContent = String(text);
             if (className) e.className = className;
             return e;
+        }
+
+        // Records the node's text under key and highlights it if it differs from the previous refresh.
+        function track(node, key) {
+            const text = node.textContent;
+            currentValues.set(key, text);
+            if (previousValues.has(key) && previousValues.get(key) !== text) {
+                node.classList.add('changed');
+            }
+            return node;
         }
 
         function bytes(n) {
@@ -291,7 +311,8 @@
         function fillDl(target, rows) {
             target.replaceChildren();
             rows.forEach(([k, v]) => {
-                target.append(el('dt', k), el('dd', v === undefined || v === null || v === '' ? '—' : v));
+                const dd = el('dd', v === undefined || v === null || v === '' ? '—' : v);
+                target.append(el('dt', k), track(dd, target.id + ':' + k));
             });
         }
 
@@ -300,14 +321,14 @@
             const max = usage && usage.max > 0 ? usage.max : (usage ? usage.committed : 0);
             const ratio = max > 0 ? usage.used / max : 0;
             const lbl = el('div', null, 'bar-label');
-            lbl.append(el('span', label), el('span', bytes(usage && usage.used) + ' / ' + bytes(usage && usage.max)));
+            lbl.append(el('span', label), track(el('span', bytes(usage && usage.used) + ' / ' + bytes(usage && usage.max)), 'mem:' + label + ':used'));
             const bar = el('div', null, 'bar');
             const fill = el('div', null, ratio > 0.9 ? 'danger' : ratio > 0.75 ? 'warn' : '');
             fill.style.width = Math.min(100, ratio * 100).toFixed(1) + '%';
             bar.append(fill);
             const details = el('div', 'init ' + bytes(usage && usage.init) + ' · committed ' + bytes(usage && usage.committed), 'muted');
             details.style.fontSize = '0.8rem';
-            wrap.append(lbl, bar, details);
+            wrap.append(lbl, bar, track(details, 'mem:' + label + ':details'));
             wrap.style.marginBottom = '0.75rem';
             return wrap;
         }
@@ -317,34 +338,48 @@
             return i < 0 ? [entry, ''] : [entry.substring(0, i), entry.substring(i + 1)];
         }
 
+        // Rows hidden by a filter are still rendered (and tracked) so changes are detected for them too.
+        function applyFilter(tbodyId, filterId) {
+            const q = $(filterId).value.trim().toLowerCase();
+            for (const tr of $(tbodyId).rows) {
+                tr.hidden = q !== '' && !tr.dataset.search.includes(q);
+            }
+        }
+
         function renderKVTable(tbodyId, countId, filterId, entries) {
             const tbody = $(tbodyId);
-            const q = $(filterId).value.trim().toLowerCase();
             const list = (entries || []).map(splitKV).sort((a, b) => a[0].localeCompare(b[0]));
             $(countId).textContent = list.length;
             tbody.replaceChildren();
-            list.filter(([k, v]) => !q || k.toLowerCase().includes(q) || v.toLowerCase().includes(q))
-                .forEach(([k, v]) => {
-                    const tr = el('tr');
-                    const key = el('td', k);
-                    key.style.whiteSpace = 'nowrap';
-                    tr.append(key, el('td', v));
-                    tbody.append(tr);
-                });
+            list.forEach(([k, v]) => {
+                const tr = el('tr');
+                tr.dataset.search = (k + '\n' + v).toLowerCase();
+                const key = el('td', k);
+                key.style.whiteSpace = 'nowrap';
+                tr.append(key, track(el('td', v), tbodyId + ':' + k));
+                tbody.append(tr);
+            });
+            applyFilter(tbodyId, filterId);
         }
 
         function renderFlags(flags) {
             const tbody = $('flags');
-            const q = $('flagsFilter').value.trim().toLowerCase();
             const list = (flags || []).slice().sort((a, b) => String(a.name).localeCompare(String(b.name)));
             $('flagsCount').textContent = list.length;
             tbody.replaceChildren();
-            list.filter(f => !q || [f.name, f.value, f.origin].some(x => String(x).toLowerCase().includes(q)))
-                .forEach(f => {
-                    const tr = el('tr');
-                    tr.append(el('td', f.name), el('td', f.value), el('td', f.origin), el('td', f.writable ? 'yes' : 'no'));
-                    tbody.append(tr);
-                });
+            list.forEach(f => {
+                const tr = el('tr');
+                tr.dataset.search = [f.name, f.value, f.origin].join('\n').toLowerCase();
+                const key = 'flag:' + f.name;
+                tr.append(
+                    el('td', f.name),
+                    track(el('td', f.value), key + ':value'),
+                    track(el('td', f.origin), key + ':origin'),
+                    track(el('td', f.writable ? 'yes' : 'no'), key + ':writable')
+                );
+                tbody.append(tr);
+            });
+            applyFilter('flags', 'flagsFilter');
         }
 
         function render(d) {
@@ -394,9 +429,9 @@
             const gc = $('gc');
             gc.replaceChildren();
             const algo = el('p');
-            algo.append(el('span', 'Algorithm: ', 'muted'), el('span', gcType || 'unknown', 'badge'));
+            algo.append(el('span', 'Algorithm: ', 'muted'), track(el('span', gcType || 'unknown', 'badge'), 'gc:algorithm'));
             const ul = el('ul', null, 'plain');
-            (d.garbageCollectors || []).forEach(g => ul.append(el('li', String(g).split(':')[0])));
+            (d.garbageCollectors || []).forEach((g, i) => ul.append(track(el('li', String(g).split(':')[0]), 'gc:' + i)));
             gc.append(algo, ul);
 
             const args = $('inputArguments');
@@ -405,7 +440,7 @@
             if (inputArgs.length === 0) {
                 args.append(el('li', '(none)', 'muted'));
             } else {
-                inputArgs.forEach(a => args.append(el('li', a)));
+                inputArgs.forEach((a, i) => args.append(track(el('li', a), 'arg:' + i)));
             }
 
             const pools = $('pools');
@@ -414,14 +449,15 @@
                 const tr = el('tr');
                 const u = p.usage || {};
                 const peak = p.peakUsage || {};
+                const key = 'pool:' + p.name;
                 tr.append(
                     el('td', p.name),
                     el('td', p.type),
                     el('td', (p.managerNames || []).join(', ')),
-                    el('td', bytes(u.used), 'num'),
-                    el('td', bytes(u.committed), 'num'),
-                    el('td', bytes(u.max), 'num'),
-                    el('td', bytes(peak.used), 'num')
+                    track(el('td', bytes(u.used), 'num'), key + ':used'),
+                    track(el('td', bytes(u.committed), 'num'), key + ':committed'),
+                    track(el('td', bytes(u.max), 'num'), key + ':max'),
+                    track(el('td', bytes(peak.used), 'num'), key + ':peak')
                 );
                 pools.append(tr);
             });
@@ -431,30 +467,55 @@
             renderKVTable('env', 'envCount', 'envFilter', d.environmentVariables);
         }
 
+        function countChanges() {
+            let n = 0;
+            for (const [key, text] of currentValues) {
+                if (previousValues.has(key) && previousValues.get(key) !== text) n++;
+            }
+            return n;
+        }
+
         async function load() {
+            if (inFlight) return;
+            inFlight = true;
             const status = $('status');
             try {
                 const res = await fetch(API_URL, { headers: { 'Accept': 'application/json' }, cache: 'no-store' });
                 if (!res.ok) throw new Error('HTTP ' + res.status);
                 latest = await res.json();
+                const isFirst = currentValues.size === 0;
+                previousValues = currentValues;
+                currentValues = new Map();
                 render(latest);
                 status.className = '';
-                status.textContent = 'Updated ' + new Date().toLocaleTimeString();
+                status.textContent = 'Updated ' + new Date().toLocaleTimeString()
+                    + (isFirst ? '' : ' · ' + countChanges() + ' changed');
             } catch (e) {
                 status.className = 'error';
                 status.textContent = 'Failed to load ' + API_URL + ': ' + e.message;
+            } finally {
+                inFlight = false;
+            }
+        }
+
+        // Chain refreshes with setTimeout so a slow response never overlaps the next request.
+        function scheduleAutoRefresh() {
+            if (timer) clearTimeout(timer);
+            timer = null;
+            const ms = Number($('auto').value);
+            if (ms > 0) {
+                timer = setTimeout(async () => {
+                    await load();
+                    scheduleAutoRefresh();
+                }, ms);
             }
         }
 
         $('refresh').addEventListener('click', load);
-        $('auto').addEventListener('change', (e) => {
-            if (timer) clearInterval(timer);
-            const ms = Number(e.target.value);
-            timer = ms > 0 ? setInterval(load, ms) : null;
-        });
-        $('flagsFilter').addEventListener('input', () => latest && renderFlags(latest.jvmFlags));
-        $('sysPropsFilter').addEventListener('input', () => latest && renderKVTable('sysProps', 'sysPropsCount', 'sysPropsFilter', latest.systemProperties));
-        $('envFilter').addEventListener('input', () => latest && renderKVTable('env', 'envCount', 'envFilter', latest.environmentVariables));
+        $('auto').addEventListener('change', scheduleAutoRefresh);
+        $('flagsFilter').addEventListener('input', () => applyFilter('flags', 'flagsFilter'));
+        $('sysPropsFilter').addEventListener('input', () => applyFilter('sysProps', 'sysPropsFilter'));
+        $('envFilter').addEventListener('input', () => applyFilter('env', 'envFilter'));
 
         load();
     })();
