@@ -31,12 +31,12 @@
                   <path>
                     <groupId>io.micronaut</groupId>
                     <artifactId>micronaut-inject-java</artifactId>
-                    <version>4.9.4</version>
+                    <version>${micronaut.core.version}</version>
                   </path>
                   <path>
                     <groupId>io.micronaut.validation</groupId>
                     <artifactId>micronaut-validation-processor</artifactId>
-                    <version>4.11.0</version>
+                    <version>${micronaut.validation.version}</version>
                   </path>
                 </annotationProcessorPaths>
               </configuration>
@@ -51,12 +51,12 @@
               <path>
                 <groupId>io.micronaut</groupId>
                 <artifactId>micronaut-inject-java</artifactId>
-                <version>4.9.4</version>
+                <version>${micronaut.core.version}</version>
               </path>
               <path>
                 <groupId>io.micronaut.validation</groupId>
                 <artifactId>micronaut-validation-processor</artifactId>
-                <version>4.11.0</version>
+                <version>${micronaut.validation.version}</version>
               </path>
             </annotationProcessorPaths>
           </configuration>
@@ -67,10 +67,10 @@
       <plugin>
         <groupId>io.micronaut.maven</groupId>
         <artifactId>micronaut-maven-plugin</artifactId>
-        <version>4.11.4</version>
+        <version>5.0.2</version>
         <configuration>
           <mainClass>${mainClass}</mainClass>
-          <testResourcesVersion>4.11.4</testResourcesVersion>
+          <testResourcesVersion>${micronaut.test.resources.version}</testResourcesVersion>
         </configuration>
       </plugin>
       <plugin>
@@ -107,7 +107,7 @@
     <dependency>
       <groupId>io.micronaut</groupId>
       <artifactId>micronaut-inject-java</artifactId>
-      <version>4.8.18</version>
+      <version>5.2.11</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
@@ -116,17 +116,17 @@
       <dependency>
         <groupId>io.micronaut.platform</groupId>
         <artifactId>micronaut-platform</artifactId>
-        <version>4.8.3</version>
+        <version>5.2.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
   <properties>
-    <micronaut.validation.version>4.11.0</micronaut.validation.version>
-    <micronaut.core.version>4.7.1</micronaut.core.version>
+    <micronaut.validation.version>5.2.1</micronaut.validation.version>
+    <micronaut.core.version>5.2.11</micronaut.core.version>
     <mainClass>io.brunoborges.showmyjvm.micronaut.Application</mainClass>
-    <micronaut.test.resources.version>2.9.2</micronaut.test.resources.version>
+    <micronaut.test.resources.version>4.3.0</micronaut.test.resources.version>
     <java.version>25</java.version>
   </properties>
 </project>
