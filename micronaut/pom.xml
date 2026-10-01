@@ -45,6 +45,10 @@
             <artifactId>showmyjvm-core</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.brunoborges.showmyjvm</groupId>
+            <artifactId>showmyjvm-web-ui</artifactId>
+        </dependency>
+        <dependency>
             <groupId>io.micronaut</groupId>
             <artifactId>micronaut-inject</artifactId>
             <scope>compile</scope>

@@ -27,7 +27,26 @@ class RouterChain implements Action<Chain> {
 
     @Override
     public void execute(Chain chain) throws Exception {
-        chain.path("jvm/inspect", new ShowMyJVMHandler()).path("jvm/inspect.json", new ShowMyJVMJsonHandler());
+        var webUi = new WebUiHandler();
+        chain.path("jvm/inspect", new ShowMyJVMHandler()).path("jvm/inspect.json", new ShowMyJVMJsonHandler())
+                .path("", webUi).path("index.html", webUi);
+    }
+}
+
+/**
+ * Serves the shared web UI (index.html) packaged in the showmyjvm-web-ui JAR.
+ */
+class WebUiHandler implements ratpack.handling.Handler {
+    private static final String INDEX = "META-INF/resources/index.html";
+
+    public void handle(Context ctx) throws Exception {
+        try (var in = RatpackStart.class.getClassLoader().getResourceAsStream(INDEX)) {
+            if (in == null) {
+                ctx.clientError(404);
+                return;
+            }
+            ctx.getResponse().contentType("text/html;charset=UTF-8").send(in.readAllBytes());
+        }
     }
 }
 

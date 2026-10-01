@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.brunoborges.showmyjvm</groupId>
+        <artifactId>showmyjvm-bom</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../bom</relativePath>
+    </parent>
+
+    <groupId>io.brunoborges.showmyjvm</groupId>
+    <artifactId>showmyjvm-web-ui</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>ShowMyJVM Web UI</name>
+    <description>
+        Shared static web interface (index.html) for all ShowMyJVM implementations.
+        Packaged under META-INF/resources so that it is served from the classpath
+        (Servlet 3.0+ resource JAR / WebJars convention).
+    </description>
+
+</project>

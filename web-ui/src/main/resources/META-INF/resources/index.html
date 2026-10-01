@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ShowMyJVM</title>
+    <style>
+        :root {
+            --bg: #f5f7fa;
+            --card: #ffffff;
+            --text: #1f2933;
+            --muted: #616e7c;
+            --border: #e4e7eb;
+            --accent: #0b6bcb;
+            --accent-soft: #e3f0fc;
+            --warn: #d97706;
+            --danger: #dc2626;
+            --mono: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #0f1419;
+                --card: #1a2129;
+                --text: #e4e7eb;
+                --muted: #9aa5b1;
+                --border: #2d3843;
+                --accent: #4da3ff;
+                --accent-soft: #1c2f44;
+            }
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-size: 14px;
+        }
+
+        header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        header h1 { margin: 0; font-size: 1.4rem; }
+        header h1 span { color: var(--accent); }
+        header .subtitle { color: var(--muted); font-size: 0.85rem; }
+
+        .toolbar { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+        .toolbar a { color: var(--accent); text-decoration: none; font-family: var(--mono); font-size: 0.85rem; }
+        .toolbar a:hover { text-decoration: underline; }
+
+        button, select {
+            font: inherit;
+            padding: 0.35rem 0.8rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--card);
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+        main {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 1rem;
+            padding: 1.5rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        section.card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            min-width: 0;
+        }
+
+        section.wide { grid-column: 1 / -1; }
+
+        section.card h2 { margin: 0 0 0.75rem; font-size: 1.05rem; }
+
+        dl { display: grid; grid-template-columns: max-content 1fr; gap: 0.35rem 1rem; margin: 0; }
+        dt { color: var(--muted); }
+        dd { margin: 0; font-family: var(--mono); word-break: break-all; }
+
+        .bar { height: 10px; background: var(--accent-soft); border-radius: 5px; overflow: hidden; margin: 0.25rem 0 0.75rem; }
+        .bar > div { height: 100%; background: var(--accent); }
+        .bar > div.warn { background: var(--warn); }
+        .bar > div.danger { background: var(--danger); }
+        .bar-label { display: flex; justify-content: space-between; font-size: 0.85rem; }
+        .bar-label span:last-child { color: var(--muted); font-family: var(--mono); }
+
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        th, td { text-align: left; padding: 0.35rem 0.5rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+        th { color: var(--muted); font-weight: 600; position: sticky; top: 0; background: var(--card); }
+        td { font-family: var(--mono); word-break: break-all; }
+        td.num, th.num { text-align: right; white-space: nowrap; }
+
+        .scroll { max-height: 420px; overflow: auto; }
+
+        ul.plain { list-style: none; margin: 0; padding: 0; }
+        ul.plain li { font-family: var(--mono); padding: 0.25rem 0; border-bottom: 1px solid var(--border); word-break: break-all; }
+
+        input.filter {
+            width: 100%;
+            padding: 0.4rem 0.6rem;
+            margin-bottom: 0.5rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--bg);
+            color: var(--text);
+            font: inherit;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.1rem 0.5rem;
+            border-radius: 999px;
+            background: var(--accent-soft);
+            color: var(--accent);
+            font-size: 0.75rem;
+            font-family: var(--mono);
+        }
+
+        .muted { color: var(--muted); }
+
+        #status { font-size: 0.85rem; color: var(--muted); }
+        #status.error { color: var(--danger); }
+
+        details summary { cursor: pointer; font-weight: 600; font-size: 1.05rem; }
+        details[open] summary { margin-bottom: 0.75rem; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div>
+        <h1>Show<span>My</span>JVM</h1>
+        <div class="subtitle" id="subtitle">JVM introspection dashboard</div>
+    </div>
+    <div class="toolbar">
+        <span id="status">Loading…</span>
+        <button class="primary" id="refresh" type="button">Refresh</button>
+        <label>Auto
+            <select id="auto">
+                <option value="0">off</option>
+                <option value="2000">2s</option>
+                <option value="5000">5s</option>
+                <option value="10000">10s</option>
+            </select>
+        </label>
+        <a href="jvm/inspect" target="_blank" rel="noopener">/jvm/inspect</a>
+        <a href="jvm/inspect.json" target="_blank" rel="noopener">/jvm/inspect.json</a>
+    </div>
+</header>
+
+<main>
+    <section class="card">
+        <h2>🖥️ Runtime</h2>
+        <dl id="runtime"></dl>
+    </section>
+
+    <section class="card">
+        <h2>💻 Operating System</h2>
+        <dl id="os"></dl>
+    </section>
+
+    <section class="card">
+        <h2>💾 Memory</h2>
+        <div id="memory"></div>
+    </section>
+
+    <section class="card">
+        <h2>🧵 Threads, Classes &amp; CPU</h2>
+        <dl id="threads"></dl>
+    </section>
+
+    <section class="card">
+        <h2>♻️ Garbage Collection</h2>
+        <div id="gc"></div>
+    </section>
+
+    <section class="card">
+        <h2>🚀 Input Arguments</h2>
+        <ul class="plain" id="inputArguments"></ul>
+    </section>
+
+    <section class="card wide">
+        <h2>📦 Memory Pools</h2>
+        <div class="scroll">
+            <table>
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Managers</th>
+                    <th class="num">Used</th>
+                    <th class="num">Committed</th>
+                    <th class="num">Max</th>
+                    <th class="num">Peak used</th>
+                </tr>
+                </thead>
+                <tbody id="pools"></tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="card wide">
+        <details>
+            <summary>⚙️ JVM Flags <span class="badge" id="flagsCount"></span></summary>
+            <input class="filter" id="flagsFilter" type="search" placeholder="Filter flags by name, value or origin…">
+            <div class="scroll">
+                <table>
+                    <thead><tr><th>Name</th><th>Value</th><th>Origin</th><th>Writable</th></tr></thead>
+                    <tbody id="flags"></tbody>
+                </table>
+            </div>
+        </details>
+    </section>
+
+    <section class="card wide">
+        <details>
+            <summary>📋 System Properties <span class="badge" id="sysPropsCount"></span></summary>
+            <input class="filter" id="sysPropsFilter" type="search" placeholder="Filter system properties…">
+            <div class="scroll"><table><tbody id="sysProps"></tbody></table></div>
+        </details>
+    </section>
+
+    <section class="card wide">
+        <details>
+            <summary>🌍 Environment Variables <span class="badge" id="envCount"></span></summary>
+            <input class="filter" id="envFilter" type="search" placeholder="Filter environment variables…">
+            <div class="scroll"><table><tbody id="env"></tbody></table></div>
+        </details>
+    </section>
+</main>
+
+<script>
+    (function () {
+        'use strict';
+
+        // Relative URL so the page also works when deployed under a servlet context path.
+        const API_URL = 'jvm/inspect.json';
+
+        const $ = (id) => document.getElementById(id);
+        let latest = null;
+        let timer = null;
+
+        function el(tag, text, className) {
+            const e = document.createElement(tag);
+            if (text !== undefined && text !== null) e.textContent = String(text);
+            if (className) e.className = className;
+            return e;
+        }
+
+        function bytes(n) {
+            if (n === undefined || n === null) return '—';
+            if (n < 0) return 'unlimited';
+            const units = ['B', 'KiB', 'MiB', 'GiB', 'TiB'];
+            let i = 0, v = n;
+            while (v >= 1024 && i < units.length - 1) { v /= 1024; i++; }
+            return (i === 0 ? v : v.toFixed(1)) + ' ' + units[i];
+        }
+
+        function pct(v) {
+            return (v === undefined || v === null || v < 0) ? 'n/a' : (v * 100).toFixed(1) + '%';
+        }
+
+        function duration(ms) {
+            if (ms === undefined || ms === null) return '—';
+            if (ms < 1000) return ms + ' ms';
+            return (ms / 1000).toFixed(2) + ' s';
+        }
+
+        function fillDl(target, rows) {
+            target.replaceChildren();
+            rows.forEach(([k, v]) => {
+                target.append(el('dt', k), el('dd', v === undefined || v === null || v === '' ? '—' : v));
+            });
+        }
+
+        function usageBar(label, usage) {
+            const wrap = el('div');
+            const max = usage && usage.max > 0 ? usage.max : (usage ? usage.committed : 0);
+            const ratio = max > 0 ? usage.used / max : 0;
+            const lbl = el('div', null, 'bar-label');
+            lbl.append(el('span', label), el('span', bytes(usage && usage.used) + ' / ' + bytes(usage && usage.max)));
+            const bar = el('div', null, 'bar');
+            const fill = el('div', null, ratio > 0.9 ? 'danger' : ratio > 0.75 ? 'warn' : '');
+            fill.style.width = Math.min(100, ratio * 100).toFixed(1) + '%';
+            bar.append(fill);
+            const details = el('div', 'init ' + bytes(usage && usage.init) + ' · committed ' + bytes(usage && usage.committed), 'muted');
+            details.style.fontSize = '0.8rem';
+            wrap.append(lbl, bar, details);
+            wrap.style.marginBottom = '0.75rem';
+            return wrap;
+        }
+
+        function splitKV(entry) {
+            const i = entry.indexOf('=');
+            return i < 0 ? [entry, ''] : [entry.substring(0, i), entry.substring(i + 1)];
+        }
+
+        function renderKVTable(tbodyId, countId, filterId, entries) {
+            const tbody = $(tbodyId);
+            const q = $(filterId).value.trim().toLowerCase();
+            const list = (entries || []).map(splitKV).sort((a, b) => a[0].localeCompare(b[0]));
+            $(countId).textContent = list.length;
+            tbody.replaceChildren();
+            list.filter(([k, v]) => !q || k.toLowerCase().includes(q) || v.toLowerCase().includes(q))
+                .forEach(([k, v]) => {
+                    const tr = el('tr');
+                    const key = el('td', k);
+                    key.style.whiteSpace = 'nowrap';
+                    tr.append(key, el('td', v));
+                    tbody.append(tr);
+                });
+        }
+
+        function renderFlags(flags) {
+            const tbody = $('flags');
+            const q = $('flagsFilter').value.trim().toLowerCase();
+            const list = (flags || []).slice().sort((a, b) => String(a.name).localeCompare(String(b.name)));
+            $('flagsCount').textContent = list.length;
+            tbody.replaceChildren();
+            list.filter(f => !q || [f.name, f.value, f.origin].some(x => String(x).toLowerCase().includes(q)))
+                .forEach(f => {
+                    const tr = el('tr');
+                    tr.append(el('td', f.name), el('td', f.value), el('td', f.origin), el('td', f.writable ? 'yes' : 'no'));
+                    tbody.append(tr);
+                });
+        }
+
+        function render(d) {
+            // Serializers name this property differently (JSON-B: gcType, Jackson: GCType or gctype).
+            const gcType = d.gcType || d.GCType || d.gctype;
+
+            $('subtitle').textContent = (d.vmName || 'JVM') + ' ' + (d.vmVersion || '') + ' — ' + (d.pidHostname || '');
+
+            fillDl($('runtime'), [
+                ['VM name', d.vmName],
+                ['VM vendor', d.vmVendor],
+                ['VM version', d.vmVersion],
+                ['PID@host', d.pidHostname],
+                ['JIT compiler', d.compilerName],
+                ['Compilation time', duration(d.totalCompilationTime)],
+                ['GC algorithm', gcType]
+            ]);
+
+            fillDl($('os'), [
+                ['Name', d.osName],
+                ['Version', d.osVersion],
+                ['Architecture', d.osArch],
+                ['Available CPUs', d.availableProcessors],
+                ['Load average', d.systemLoadAverage >= 0 ? Number(d.systemLoadAverage).toFixed(2) : 'n/a'],
+                ['Total memory', bytes(d.totalMemorySize)],
+                ['Free memory', bytes(d.freeMemorySize)],
+                ['Total swap', bytes(d.totalSwapSpaceSize)],
+                ['Free swap', bytes(d.freeSwapSpaceSize)],
+                ['Committed virtual', bytes(d.committedVirtualMemory)]
+            ]);
+
+            const mem = $('memory');
+            mem.replaceChildren(usageBar('Heap', d.heapMemoryUsage), usageBar('Non-heap', d.nonHeapMemoryUsage));
+
+            fillDl($('threads'), [
+                ['Live threads', d.threadCount],
+                ['Peak threads', d.peakThreadCount],
+                ['Started threads', d.totalStartedThreadCount],
+                ['Loaded classes', d.loadedClassCount],
+                ['Total loaded classes', d.totalLoadedClassCount],
+                ['Unloaded classes', d.unloadedClassCount],
+                ['Process CPU load', pct(d.processCpuLoad)],
+                ['System CPU load', pct(d.cpuLoad)],
+                ['Process CPU time', d.processCpuTime >= 0 ? duration(Math.round(d.processCpuTime / 1e6)) : 'n/a']
+            ]);
+
+            const gc = $('gc');
+            gc.replaceChildren();
+            const algo = el('p');
+            algo.append(el('span', 'Algorithm: ', 'muted'), el('span', gcType || 'unknown', 'badge'));
+            const ul = el('ul', null, 'plain');
+            (d.garbageCollectors || []).forEach(g => ul.append(el('li', String(g).split(':')[0])));
+            gc.append(algo, ul);
+
+            const args = $('inputArguments');
+            args.replaceChildren();
+            const inputArgs = d.inputArguments || [];
+            if (inputArgs.length === 0) {
+                args.append(el('li', '(none)', 'muted'));
+            } else {
+                inputArgs.forEach(a => args.append(el('li', a)));
+            }
+
+            const pools = $('pools');
+            pools.replaceChildren();
+            (d.memoryPoolMXBeans || []).forEach(p => {
+                const tr = el('tr');
+                const u = p.usage || {};
+                const peak = p.peakUsage || {};
+                tr.append(
+                    el('td', p.name),
+                    el('td', p.type),
+                    el('td', (p.managerNames || []).join(', ')),
+                    el('td', bytes(u.used), 'num'),
+                    el('td', bytes(u.committed), 'num'),
+                    el('td', bytes(u.max), 'num'),
+                    el('td', bytes(peak.used), 'num')
+                );
+                pools.append(tr);
+            });
+
+            renderFlags(d.jvmFlags);
+            renderKVTable('sysProps', 'sysPropsCount', 'sysPropsFilter', d.systemProperties);
+            renderKVTable('env', 'envCount', 'envFilter', d.environmentVariables);
+        }
+
+        async function load() {
+            const status = $('status');
+            try {
+                const res = await fetch(API_URL, { headers: { 'Accept': 'application/json' }, cache: 'no-store' });
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                latest = await res.json();
+                render(latest);
+                status.className = '';
+                status.textContent = 'Updated ' + new Date().toLocaleTimeString();
+            } catch (e) {
+                status.className = 'error';
+                status.textContent = 'Failed to load ' + API_URL + ': ' + e.message;
+            }
+        }
+
+        $('refresh').addEventListener('click', load);
+        $('auto').addEventListener('change', (e) => {
+            if (timer) clearInterval(timer);
+            const ms = Number(e.target.value);
+            timer = ms > 0 ? setInterval(load, ms) : null;
+        });
+        $('flagsFilter').addEventListener('input', () => latest && renderFlags(latest.jvmFlags));
+        $('sysPropsFilter').addEventListener('input', () => latest && renderKVTable('sysProps', 'sysPropsCount', 'sysPropsFilter', latest.systemProperties));
+        $('envFilter').addEventListener('input', () => latest && renderKVTable('env', 'envCount', 'envFilter', latest.environmentVariables));
+
+        load();
+    })();
+</script>
+</body>
+</html>

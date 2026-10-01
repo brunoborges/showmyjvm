@@ -6,6 +6,8 @@ import io.helidon.http.media.jsonb.JsonbSupport;
 import io.helidon.logging.common.LogConfig;
 import io.helidon.webserver.WebServer;
 import io.helidon.webserver.http.HttpRouting;
+import io.helidon.webserver.staticcontent.ClasspathHandlerConfig;
+import io.helidon.webserver.staticcontent.StaticContentFeature;
 
 public class Main {
 
@@ -29,5 +31,9 @@ public class Main {
 
     static void routing(HttpRouting.Builder routing) {
         routing.register("/jvm", new ShowMyJVMService());
+        routing.register("/", StaticContentFeature.createService(ClasspathHandlerConfig.builder()
+                .location("META-INF/resources")
+                .welcome("index.html")
+                .build()));
     }
 }

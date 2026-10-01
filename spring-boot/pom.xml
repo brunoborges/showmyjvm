@@ -47,6 +47,10 @@
             <groupId>io.brunoborges.showmyjvm</groupId>
             <artifactId>showmyjvm-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.brunoborges.showmyjvm</groupId>
+            <artifactId>showmyjvm-web-ui</artifactId>
+        </dependency>
 
         <!-- Spring Boot -->
         <dependency>

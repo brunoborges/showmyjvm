@@ -8,6 +8,7 @@ ShowMyJVM is a sophisticated Maven multi-module Java project that demonstrates c
 
 - **bom/** - Bill of Materials module for centralized dependency management (Java 25, plugins)
 - **core/** - Core JVM introspection library (JVMDetails, ShowJVM classes)
+- **web-ui/** - Shared static web interface (`META-INF/resources/index.html`) packaged as a resource JAR and reused by every framework module
 - **{framework}/** - Nine framework implementations (spring-boot, quarkus, micronaut, helidon, helidon-mp, javalin, ratpack, sparkjava, tomcat)
 - **e2e-tests/** - Playwright test suite validating all implementations
 - **serverless/** - Deprecated serverless implementations (Azure Functions, AWS Lambda)
@@ -15,6 +16,7 @@ ShowMyJVM is a sophisticated Maven multi-module Java project that demonstrates c
 Each framework module depends on `core` and implements the same two endpoints:
 - `/jvm/inspect` - Returns JVM analysis as plain text
 - `/jvm/inspect.json` - Returns JVM analysis as JSON
+- `/` and `/index.html` - Shared web UI (from `showmyjvm-web-ui`) that calls `/jvm/inspect.json` via JavaScript
 
 ## Build & Test Commands
 
@@ -197,7 +199,7 @@ Framework module artifacts follow pattern: `showmyjvm-{framework}`
 ### Adding a New Framework Implementation
 1. Create new module directory: `{framework}/`
 2. Create `pom.xml` with parent pointing to `../bom`
-3. Add dependency: `showmyjvm-core`
+3. Add dependencies: `showmyjvm-core` and `showmyjvm-web-ui` (serve `META-INF/resources` from the classpath at `/`)
 4. Add framework dependencies from BOM
 5. Create package: `io.brunoborges.showmyjvm.{framework}`
 6. Implement controller/handler with both endpoints
