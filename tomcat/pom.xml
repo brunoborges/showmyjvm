@@ -51,13 +51,13 @@
         <dependency>
             <groupId>jakarta.json.bind</groupId>
             <artifactId>jakarta.json.bind-api</artifactId>
-            <version>3.0.1</version>
+            <version>3.0.3</version>
         </dependency>
         <!-- JSON-B Implementation -->
         <dependency>
             <groupId>org.eclipse</groupId>
             <artifactId>yasson</artifactId>
-            <version>3.0.4</version>
+            <version>3.0.5</version>
         </dependency>
     </dependencies>
 
@@ -75,7 +75,7 @@
             <plugin>
                 <groupId>org.codehaus.cargo</groupId>
                 <artifactId>cargo-maven3-plugin</artifactId>
-                <version>1.10.19</version>
+                <version>1.10.29</version>
                 <configuration>
                     <container>
                         <containerId>tomcat11x</containerId>

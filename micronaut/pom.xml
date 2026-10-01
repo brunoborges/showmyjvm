@@ -20,9 +20,9 @@
     <description>Demo project for Micronaut</description>
 
     <properties>
-        <micronaut.core.version>4.7.1</micronaut.core.version>
-        <micronaut.validation.version>4.11.0</micronaut.validation.version>
-        <micronaut.test.resources.version>2.9.2</micronaut.test.resources.version>
+        <micronaut.core.version>5.2.11</micronaut.core.version>
+        <micronaut.validation.version>5.2.1</micronaut.validation.version>
+        <micronaut.test.resources.version>4.3.0</micronaut.test.resources.version>
         <mainClass>io.brunoborges.showmyjvm.micronaut.Application</mainClass>
         <java.version>25</java.version>
     </properties>
@@ -32,7 +32,7 @@
             <dependency>
                 <groupId>io.micronaut.platform</groupId>
                 <artifactId>micronaut-platform</artifactId>
-                <version>4.8.3</version>
+                <version>5.2.1</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -87,7 +87,6 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.5.21</version>
             <scope>runtime</scope>
         </dependency>
     </dependencies>
@@ -97,10 +96,10 @@
             <plugin>
                 <groupId>io.micronaut.maven</groupId>
                 <artifactId>micronaut-maven-plugin</artifactId>
-                <version>4.11.4</version>
+                <version>5.0.2</version>
                 <configuration>
                     <mainClass>${mainClass}</mainClass>
-                    <testResourcesVersion>4.11.4</testResourcesVersion>
+                    <testResourcesVersion>${micronaut.test.resources.version}</testResourcesVersion>
                 </configuration>
             </plugin>
             <plugin>
@@ -149,12 +148,12 @@
                             <path>
                                 <groupId>io.micronaut</groupId>
                                 <artifactId>micronaut-inject-java</artifactId>
-                                <version>4.9.4</version>
+                                <version>${micronaut.core.version}</version>
                             </path>
                             <path>
                                 <groupId>io.micronaut.validation</groupId>
                                 <artifactId>micronaut-validation-processor</artifactId>
-                                <version>4.11.0</version>
+                                <version>${micronaut.validation.version}</version>
                             </path>
                         </annotationProcessorPaths>
                     </configuration>
@@ -172,12 +171,12 @@
                                     <path>
                                         <groupId>io.micronaut</groupId>
                                         <artifactId>micronaut-inject-java</artifactId>
-                                        <version>4.9.4</version>
+                                        <version>${micronaut.core.version}</version>
                                     </path>
                                     <path>
                                         <groupId>io.micronaut.validation</groupId>
                                         <artifactId>micronaut-validation-processor</artifactId>
-                                        <version>4.11.0</version>
+                                        <version>${micronaut.validation.version}</version>
                                     </path>
                                 </annotationProcessorPaths>
                             </configuration>

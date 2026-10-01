@@ -29,7 +29,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
                 <type>pom</type>
-                <version>4.0.0</version>
+                <version>4.1.1</version>
                 <scope>import</scope>
             </dependency>
         </dependencies>
@@ -60,7 +60,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>4.0.0</version>
+                <version>4.1.1</version>
                 <configuration>
                     <mainClass>io.brunoborges.showmyjvm.springboot.Application</mainClass>
                 </configuration>

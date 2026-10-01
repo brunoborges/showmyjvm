@@ -18,7 +18,7 @@
     "test:tomcat": "playwright test --project=tomcat"
   },
   "devDependencies": {
-    "@playwright/test": "^1.48.0",
-    "@types/node": "^22.0.0"
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^24.0.0"
   }
 }
