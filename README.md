@@ -188,6 +188,52 @@ These implementations are preserved for reference but not included in the main b
 ./mvnw org.owasp:dependency-check-maven:check
 ```
 
+### Spring Boot composed Brewlet deployment
+
+The Spring Boot module has an opt-in `brewlet` profile pinned to
+`sh.brewlet:brewlet-maven-plugin:0.6.1`. It skips Jib's Docker build and, after
+Spring Boot repackaging, generates a launch config and a local runnable OCI image:
+
+```bash
+# Run from the repository root; includes core and the shared web UI.
+./mvnw -pl spring-boot -am -Pbrewlet clean package
+```
+
+Outputs are under `spring-boot/target/brewlet/`: `jvm-config.json` contains the
+classpath launch configuration, `prepared/` contains the thin application and
+packaged libraries, and `oci/` contains the composed OCI image layout. Brewlet
+extracts the application classes/resources and exact libraries from the Boot JAR,
+preserving its classpath order. Released dependencies and snapshot dependencies
+(including `showmyjvm-core` and `showmyjvm-web-ui`) occupy separate reusable
+classpath layers. The original executable Boot JAR remains unchanged and can
+still be run with `java -jar`. Builds without `-Pbrewlet` retain the existing
+Spring Boot/Jib behavior.
+
+The default local image reference is `showmyjvm-springboot:1.0.0-SNAPSHOT`;
+override it with `-Dbrewlet.image=registry.example.com/team/showmyjvm:tag`.
+Packaging does not publish anything. To publish, first install the reactor
+dependencies, then invoke the plugin only on the Spring Boot module:
+
+```bash
+./mvnw -pl spring-boot -am -Pbrewlet clean install
+./mvnw -f spring-boot/pom.xml -Pbrewlet brewlet:push \
+  -Dbrewlet.image=registry.example.com/team/showmyjvm:1.0.0-SNAPSHOT
+
+# Use the digest-pinned deploy image printed by push.
+./mvnw -f spring-boot/pom.xml -Pbrewlet brewlet:manifest \
+  -Dbrewlet.image=registry.example.com/team/showmyjvm@sha256:REPLACE_WITH_IMAGE_DIGEST
+```
+
+The generated `JavaApplication` descriptor requests Java 25 and requires a
+Brewlet-enabled Kubernetes cluster. The application still defaults to port 8080
+and honors `PORT`; if changing it, match the deployment's port configuration.
+Registry credentials belong in Maven `settings.xml`, Docker's credential
+configuration, or Brewlet's registry environment variables, not in the POM.
+
+Version 0.6.1 is being released. If Maven Central cannot resolve it yet, wait for
+publication and propagation, then retry with `-U`; do not substitute another
+plugin version.
+
 ## 🚀 Running the Applications
 
 All implementations support the **PORT environment variable** for dynamic port configuration.
