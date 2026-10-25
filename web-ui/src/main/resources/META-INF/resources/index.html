@@ -241,6 +241,26 @@
 
     <section class="card wide">
         <details>
+            <summary>🔐 JDK CA Root Certificates <span class="badge" id="caCertsCount"></span></summary>
+            <p class="muted" style="margin-top: 0">Trusted root certificates bundled in <code>$JAVA_HOME/lib/security/cacerts</code>.</p>
+            <div style="display: flex; gap: 0.5rem; align-items: baseline;">
+                <input class="filter" id="caCertsFilter" type="search" placeholder="Search certificates by name…" aria-label="Search certificates">
+                <select id="caCertsScope" aria-label="Search scope">
+                    <option value="name">Name</option>
+                    <option value="all">All fields</option>
+                </select>
+            </div>
+            <div class="scroll">
+                <table>
+                    <thead><tr><th>Name</th><th>Alias</th><th>Subject</th><th>Key</th><th>Signature</th><th>Valid from</th><th>Expires</th></tr></thead>
+                    <tbody id="caCerts"></tbody>
+                </table>
+            </div>
+        </details>
+    </section>
+
+    <section class="card wide">
+        <details>
             <summary>📋 System Properties <span class="badge" id="sysPropsCount"></span></summary>
             <input class="filter" id="sysPropsFilter" type="search" placeholder="Filter system properties…">
             <div class="scroll"><table><tbody id="sysProps"></tbody></table></div>
@@ -386,6 +406,53 @@
             applyFilter('flags', 'flagsFilter');
         }
 
+        // Certificates come from a static file, so they are rendered without change tracking.
+        function renderCaCerts(certs) {
+            const tbody = $('caCerts');
+            const list = (certs || []).slice().sort((a, b) => String(a.name || a.alias).localeCompare(String(b.name || b.alias)));
+            $('caCertsCount').textContent = list.length;
+            tbody.replaceChildren();
+            const now = Date.now();
+            const soon = now + 90 * 24 * 3600 * 1000;
+            list.forEach(c => {
+                const tr = el('tr');
+                tr.dataset.name = String(c.name || c.alias).toLowerCase();
+                tr.dataset.search = [c.name, c.alias, c.subject, c.issuer, c.publicKeyAlgorithm, c.signatureAlgorithm,
+                    c.serialNumber, c.sha256Fingerprint].join('\n').toLowerCase();
+                tr.title = 'Issuer: ' + c.issuer + '\nSerial: ' + c.serialNumber + '\nSHA-256: ' + c.sha256Fingerprint;
+                const expires = Date.parse(c.notAfter);
+                const expiresCell = el('td', String(c.notAfter || '').substring(0, 10));
+                expiresCell.style.whiteSpace = 'nowrap';
+                if (expires < now) {
+                    expiresCell.style.color = 'var(--danger)';
+                    expiresCell.textContent += ' (expired)';
+                } else if (expires < soon) {
+                    expiresCell.style.color = 'var(--warn)';
+                }
+                const fromCell = el('td', String(c.notBefore || '').substring(0, 10));
+                fromCell.style.whiteSpace = 'nowrap';
+                const nameCell = el('td', c.name || c.alias);
+                nameCell.style.fontFamily = 'inherit';
+                nameCell.style.fontWeight = '600';
+                tr.append(nameCell, el('td', c.alias), el('td', c.subject), el('td', c.publicKeyAlgorithm),
+                    el('td', c.signatureAlgorithm), fromCell, expiresCell);
+                tbody.append(tr);
+            });
+            filterCaCerts();
+        }
+
+        function filterCaCerts() {
+            const q = $('caCertsFilter').value.trim().toLowerCase();
+            const byName = $('caCertsScope').value === 'name';
+            let shown = 0;
+            for (const tr of $('caCerts').rows) {
+                tr.hidden = q !== '' && !(byName ? tr.dataset.name : tr.dataset.search).includes(q);
+                if (!tr.hidden) shown++;
+            }
+            const total = $('caCerts').rows.length;
+            $('caCertsCount').textContent = q === '' ? total : shown + ' / ' + total;
+        }
+
         function render(d) {
             // Serializers name this property differently (JSON-B: gcType, Jackson: GCType or gctype).
             const gcType = d.gcType || d.GCType || d.gctype;
@@ -467,6 +534,7 @@
             });
 
             renderFlags(d.jvmFlags);
+            renderCaCerts(d.caCertificates);
             renderKVTable('sysProps', 'sysPropsCount', 'sysPropsFilter', d.systemProperties);
             renderKVTable('env', 'envCount', 'envFilter', d.environmentVariables);
         }
@@ -518,6 +586,8 @@
         $('refresh').addEventListener('click', load);
         $('auto').addEventListener('change', scheduleAutoRefresh);
         $('flagsFilter').addEventListener('input', () => applyFilter('flags', 'flagsFilter'));
+        $('caCertsFilter').addEventListener('input', filterCaCerts);
+        $('caCertsScope').addEventListener('change', filterCaCerts);
         $('sysPropsFilter').addEventListener('input', () => applyFilter('sysProps', 'sysPropsFilter'));
         $('envFilter').addEventListener('input', () => applyFilter('env', 'envFilter'));
 

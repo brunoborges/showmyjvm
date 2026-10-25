@@ -43,6 +43,7 @@ public class JVMDetails {
     private long totalSwapSpaceSize;
     private int availableProcessors;
     private GCType gcType;
+    private List<CACertificate> caCertificates;
 
     public JVMDetails() {
     }
@@ -434,6 +435,17 @@ public class JVMDetails {
      */
     public GCType getGCType() {
      return gcType;
+    }
+
+    public void caCertificates(List<CACertificate> caCertificates) {
+        this.caCertificates = caCertificates;
+    }
+
+    /**
+     * @return the root CA certificates bundled in the JDK cacerts file
+     */
+    public List<CACertificate> getCaCertificates() {
+        return caCertificates;
     }
 
 }
