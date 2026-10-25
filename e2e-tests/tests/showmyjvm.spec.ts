@@ -69,6 +69,24 @@ test.describe('ShowMyJVM shared web UI', () => {
     await expect(page.locator('#runtime dd').first()).not.toHaveText('—');
     await expect(page.locator('#os')).toContainText(/Architecture/);
     await expect(page.locator('#pools tr').first()).toBeVisible();
+    await expect(page.locator('#caCertsCount')).toHaveText(/^[1-9]\d*$/);
+  });
+
+  test('should search CA root certificates by name', async ({ page }) => {
+    await page.goto('/index.html');
+    await expect(page.locator('#status')).toContainText('Updated');
+
+    await page.locator('summary', { hasText: 'JDK CA Root Certificates' }).click();
+    const firstName = (await page.locator('#caCerts tr td').first().textContent()) ?? '';
+    expect(firstName.length).toBeGreaterThan(0);
+
+    await page.locator('#caCertsFilter').fill(firstName);
+    const visible = page.locator('#caCerts tr:not([hidden])');
+    await expect(visible.first()).toContainText(firstName);
+    await expect(page.locator('#caCertsCount')).toHaveText(/^\d+ \/ \d+$/);
+
+    await page.locator('#caCertsFilter').fill('no-such-certificate-name');
+    await expect(visible).toHaveCount(0);
   });
 
 });

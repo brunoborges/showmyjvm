@@ -139,6 +139,8 @@ public class ShowJVM {
         jvmDetails.systemProperties(System.getProperties().entrySet().stream()
                 .map(entry -> entry.getKey() + "=" + entry.getValue()).collect(Collectors.toList()));
 
+        jvmDetails.caCertificates(CACertificates.list());
+
         return jvmDetails;
     }
 
@@ -153,7 +155,7 @@ public class ShowJVM {
         systemProperties();
         environmentVariables();
         jvmFlags();
-
+        caCertificates();
 
         String _return = buffer.toString();
         buffer.setLength(0);
@@ -165,6 +167,13 @@ public class ShowJVM {
         append("");
         append("## JVM Final Flags:");
         new PrintFlagsFinal().getJVMFlags().forEach(this::append);
+    }
+
+    private void caCertificates() {
+        List<CACertificate> certificates = CACertificates.list();
+        append("");
+        append("## JDK CA Root Certificates (%d) from %s", certificates.size(), CACertificates.cacertsFile());
+        certificates.forEach(this::append);
     }
 
     private void environmentVariables() {
