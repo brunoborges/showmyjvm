@@ -94,30 +94,23 @@
             <id>brewlet</id>
             <properties>
                 <jib.skip>true</jib.skip>
-                <brewlet.image>${project.artifactId}:${project.version}</brewlet.image>
             </properties>
             <build>
                 <plugins>
                     <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <!-- Keep the thin main artifact for Brewlet's separate library layer. -->
+                            <classifier>exec</classifier>
+                        </configuration>
+                    </plugin>
+                    <plugin>
                         <groupId>sh.brewlet</groupId>
                         <artifactId>brewlet-maven-plugin</artifactId>
-                        <version>0.6.1</version>
                         <configuration>
-                            <image>${brewlet.image}</image>
-                            <layered>true</layered>
-                            <splitSnapshotLayers>true</splitSnapshotLayers>
-                            <jdkFeature>${java.version}</jdkFeature>
+                            <mainClass>io.brunoborges.showmyjvm.springboot.Application</mainClass>
                         </configuration>
-                        <executions>
-                            <execution>
-                                <id>brewlet-layered-image</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>config</goal>
-                                    <goal>build</goal>
-                                </goals>
-                            </execution>
-                        </executions>
                     </plugin>
                 </plugins>
             </build>
